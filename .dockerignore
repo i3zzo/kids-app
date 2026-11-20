@@ -1,0 +1,6 @@
+.git
+.env
+omniroute.env
+omniroute-data
+test
+node_modules

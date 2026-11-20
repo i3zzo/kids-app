@@ -1,0 +1,17 @@
+{
+  "name": "kids-app",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Bilingual (Arabic/English) kids app for Kuwait with an AI helper powered by a self-hosted OmniRoute gateway.",
+  "type": "module",
+  "main": "server/index.js",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "start": "node server/index.js",
+    "dev": "node --watch server/index.js",
+    "test": "node --test test/*.test.js"
+  },
+  "license": "UNLICENSED"
+}

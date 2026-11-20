@@ -1,0 +1,40 @@
+# Kids app + self-hosted OmniRoute AI gateway.
+#
+#   cp .env.example .env                 # app settings (OmniRoute API key goes here)
+#   cp omniroute.env.example omniroute.env   # gateway secrets
+#   docker compose up -d --build
+#
+# Kids app:            http://localhost:3000
+# OmniRoute dashboard: http://localhost:20128   (only reachable from this machine)
+
+services:
+  app:
+    build: .
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      # Talk to the gateway over the private compose network.
+      OMNIROUTE_BASE_URL: http://omniroute:20128/v1
+    ports:
+      - "3000:3000"
+    depends_on:
+      - omniroute
+
+  omniroute:
+    # Pinned on purpose: bump deliberately after reading the release notes.
+    image: cheaperinference/omniroute:3.8.54
+    restart: unless-stopped
+    stop_grace_period: 40s
+    env_file: omniroute.env
+    environment:
+      DATA_DIR: /app/data
+      PORT: "20128"
+    # Bound to 127.0.0.1 so the dashboard and API are never exposed to the internet.
+    ports:
+      - "127.0.0.1:20128:20128"
+    volumes:
+      - omniroute-data:/app/data
+    mem_limit: 2g
+
+volumes:
+  omniroute-data:
