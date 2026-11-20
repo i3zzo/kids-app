@@ -17,23 +17,26 @@ repo in Claude Code and trust the folder, it offers to install the enabled ones.
 Browse the rest of the official catalogue with `/plugin` (for example `expo`
 or `typescript-lsp` once the app stack is settled).
 
-## Registered but NOT enabled (install on your own machine if you want them)
+## Also enabled: claude-mem and headroom (need local setup)
 
-These run background services on your computer and have telemetry on by
-default, so they are opt-in per developer rather than switched on for the repo.
+Both are switched on in `settings.json`. `settings.json` also sets
+`DO_NOT_TRACK=1`, `CLAUDE_MEM_TELEMETRY=0`, `HEADROOM_TELEMETRY=off` and
+`HEADROOM_BEACON=off`, so their analytics stay off in sessions started from this repo.
 
 ### claude-mem (persistent memory across sessions)
-- Runs a local worker (auto-installs Bun), stores every tool call and summary
-  in `~/.claude-mem`, and uses an extra model call to summarise sessions.
-- Anonymous usage analytics are ON by default. Optional cloud sync to cmem.ai.
-- Install: `/plugin install claude-mem@thedotmack`, then run
-  `npx claude-mem telemetry disable`. Leave Cloud Sync and TeamBrain off.
-- Do not use it while handling real child or parent data: it records
-  everything Claude reads.
+- First run auto-installs Bun and starts a local worker. Data stays in
+  `~/.claude-mem` on your machine. If the hooks complain, run `npx claude-mem doctor`.
+- It records every tool call Claude makes and summarises it with an extra
+  model call. Do not use it while handling real child or parent data.
+- Keep Cloud Sync and TeamBrain OFF (both are opt-in). For extra safety also run
+  `npx claude-mem telemetry disable` once, since the env vars only apply inside
+  Claude Code sessions.
 
 ### headroom (token compression proxy)
-- Needs the Python CLI: `uv tool install headroom-ai` (or `pip install headroom-ai`).
-- Then either `headroom wrap claude` or `/plugin install headroom@headroom-marketplace`.
-- Anonymous beacon is ON by default. Disable with `export HEADROOM_TELEMETRY=off`
-  (or `DO_NOT_TRACK=1`) in your shell profile.
-- Routes your Claude API traffic through a local proxy; compression runs locally.
+- The plugin only works once the CLI is installed on your machine:
+  `uv tool install headroom-ai` (or `pip install headroom-ai`). Without it the
+  hook prints a warning and does nothing.
+- For full compression launch Claude with `headroom wrap claude`
+  (undo with `headroom unwrap claude`).
+- Add `export HEADROOM_TELEMETRY=off` to your shell profile so the beacon also
+  stays off when you run `headroom` outside Claude Code.
