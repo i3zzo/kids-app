@@ -61,3 +61,19 @@ Both are switched on in `settings.json`. `settings.json` also sets
   user data.
 - If sessions feel slow or noisy, turn it off in `.claude/settings.json` by
   setting `"oh-my-claudecode@omc": false`.
+
+## Batch 3: agent-skills, Context7, Graphify, 21st.dev Magic, Strix
+
+| Tool | How it's added | Needs on your side |
+|---|---|---|
+| agent-skills (Addy Osmani) | Plugin `agent-skills@addy-agent-skills` | Nothing. Engineering workflow skills (spec, plan, test, review, ship). |
+| Context7 | Plugin `context7@claude-plugins-official` | Nothing. Library names and doc queries go to Context7's hosted server (no code). Optional `CONTEXT7_API_KEY` for higher limits. |
+| Graphify | Skill copied to `.claude/skills/graphify` | Python 3.11+ and `uv tool install graphifyy` (note the double y). Then type `/graphify .` Code is parsed locally. It writes `graphify-out/`, which you may want in `.gitignore`. |
+| 21st.dev Magic (UI components) | MCP server in `.mcp.json` | Free API key from https://21st.dev/magic/console, then `export TWENTYFIRST_API_KEY=...` in your shell profile. Never commit the key. Claude Code asks you to approve this MCP server the first time. |
+| Strix (AI pentesting) | 8 skills copied to `.claude/skills/` | Docker running, `curl -sSL https://strix.ai/install \| bash` (read the script first), plus an LLM key (`STRIX_LLM`, `LLM_API_KEY`). |
+
+### Strix: read before using
+- Only scan the kids app and servers you own. Scanning anything else can be illegal.
+- Scans spend your LLM key; use `--max-budget` to cap cost.
+- The `managed-pentesting-with-strix` skill was left out on purpose: it drives
+  the paid Strix cloud and can buy credits through a Stripe Link wallet.

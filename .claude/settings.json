@@ -30,6 +30,12 @@
         "source": "github",
         "repo": "Yeachan-Heo/oh-my-claudecode"
       }
+    },
+    "addy-agent-skills": {
+      "source": {
+        "source": "github",
+        "repo": "addyosmani/agent-skills"
+      }
     }
   },
   "enabledPlugins": {
@@ -44,7 +50,9 @@
     "supabase@claude-plugins-official": true,
     "vercel@claude-plugins-official": true,
     "chrome-devtools-mcp@claude-plugins-official": true,
-    "oh-my-claudecode@omc": true
+    "oh-my-claudecode@omc": true,
+    "agent-skills@addy-agent-skills": true,
+    "context7@claude-plugins-official": true
   },
   "env": {
     "DO_NOT_TRACK": "1",
