@@ -29,3 +29,12 @@ textarea:focus, button:focus-visible { outline: 3px solid var(--pink); outline-o
 .answer.error { border: 2px solid var(--pink); }
 .note { margin-top: 28px; font-size: .9rem; opacity: .7; }
 .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+.logo { flex: none; }
+#send[aria-busy="true"] span::after { content: " …"; }
+/* Skeleton shown only when Buddy takes longer than a second to start answering. */
+.answer.skeleton { white-space: normal; }
+.skeleton .bar { height: 1em; margin: .55em 0; border-radius: 8px; background: linear-gradient(90deg, #f1ead8 25%, #faf6ec 50%, #f1ead8 75%); background-size: 200% 100%; animation: shimmer 1.4s linear infinite; }
+.skeleton .bar:nth-child(2) { width: 85%; }
+.skeleton .bar:nth-child(3) { width: 60%; }
+@keyframes shimmer { from { background-position: 200% 0; } to { background-position: -200% 0; } }
+@media (prefers-reduced-motion: reduce) { .skeleton .bar { animation: none; } }

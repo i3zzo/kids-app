@@ -53,11 +53,25 @@ node --env-file=.env server/index.js
 npm test
 ```
 
+`npm run dev` restarts the server when files in `server/` or `public/` change.
+
+## Performance
+
+Replies stream word by word, static assets are cached and compressed, and the page paints without waiting for JavaScript.
+See [docs/PERFORMANCE.md](docs/PERFORMANCE.md) for the audit and measurements. To benchmark (needs Playwright + Chromium installed locally):
+
+```bash
+node bench/fake-gateway.mjs &                       # synthetic gateway, fixed timing
+OMNIROUTE_BASE_URL=http://localhost:20999/v1 OMNIROUTE_API_KEY=x RATE_LIMIT_MAX=1000 npm start &
+node bench/run.mjs http://localhost:3000 5
+```
+
 ## Project layout
 
 | Path | What it is |
 | --- | --- |
-| `server/app.js` | HTTP server: static files, `/api/ask`, `/healthz` |
+| `server/app.js` | HTTP server: `/api/ask` (JSON or streamed NDJSON), `/healthz` |
+| `server/static.js` | In-memory static files: hashed URLs, cache headers, compression, inlined CSS |
 | `server/omniroute.js` | Client for OmniRoute's `/v1/chat/completions` |
 | `server/safety.js` | Input checks, personal-info redaction, child-safe system prompt |
 | `public/` | The Arabic/English web UI |

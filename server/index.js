@@ -4,7 +4,7 @@ import { createOmniRouteClient } from "./omniroute.js";
 
 const config = loadConfig();
 const ai = createOmniRouteClient(config.omniroute);
-const server = createApp({ ai, rateLimit: config.rateLimit });
+const server = await createApp({ ai, rateLimit: config.rateLimit });
 
 if (!config.omniroute.apiKey) {
   console.warn("[kids-app] OMNIROUTE_API_KEY is not set. The AI helper will be unavailable until you add it (see README).");

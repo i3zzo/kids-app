@@ -68,10 +68,42 @@ function render() {
   });
 }
 
+const SKELETON_DELAY_MS = 1000;
+
 function showAnswer(text, isError = false) {
   answer.hidden = false;
+  answer.classList.remove("skeleton");
   answer.classList.toggle("error", isError);
   answer.textContent = text; // textContent, never innerHTML: AI output is untrusted.
+}
+
+function showSkeleton() {
+  answer.hidden = false;
+  answer.classList.remove("error");
+  answer.classList.add("skeleton");
+  answer.replaceChildren(...[1, 2, 3].map(() => Object.assign(document.createElement("div"), { className: "bar" })));
+  answer.setAttribute("aria-busy", "true");
+}
+
+// Reads the server's NDJSON stream and appends text as it arrives.
+async function readStream(res, onDelta) {
+  const reader = res.body.getReader();
+  const decoder = new TextDecoder();
+  let buffer = "";
+  for (;;) {
+    const { value, done } = await reader.read();
+    if (done) break;
+    buffer += decoder.decode(value, { stream: true });
+    let nl;
+    while ((nl = buffer.indexOf("\n")) !== -1) {
+      const line = buffer.slice(0, nl);
+      buffer = buffer.slice(nl + 1);
+      if (!line) continue;
+      const msg = JSON.parse(line);
+      if (msg.error) throw Object.assign(new Error(msg.error), { code: msg.error });
+      if (msg.delta) onDelta(msg.delta);
+    }
+  }
 }
 
 $("#lang-toggle").addEventListener("click", () => {
@@ -94,22 +126,57 @@ message.addEventListener("input", () => {
 $("#ask-form").addEventListener("submit", async (e) => {
   e.preventDefault();
   const text = message.value.trim();
-  if (!text) return;
+  if (!text || sendBtn.disabled) return;
   sendBtn.disabled = true;
-  showAnswer(t("thinking"));
+  sendBtn.setAttribute("aria-busy", "true");
+  answer.setAttribute("aria-busy", "true");
+  $("#thinking").textContent = t("thinking");
+  // No placeholder for fast answers; a skeleton only if nothing has arrived after a second.
+  let started = false;
+  const skeletonTimer = setTimeout(() => !started && showSkeleton(), SKELETON_DELAY_MS);
+  let textNode = null;
+  const start = () => {
+    if (started) return;
+    started = true;
+    clearTimeout(skeletonTimer);
+    showAnswer("");
+    answer.setAttribute("aria-busy", "true"); // screen readers read the reply once it's complete
+    textNode = document.createTextNode("");
+    answer.append(textNode);
+  };
   try {
     const res = await fetch("/api/ask", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ message: text, mode: state.mode, lang: state.lang }),
+      body: JSON.stringify({ message: text, mode: state.mode, lang: state.lang, stream: true }),
     });
-    const data = await res.json().catch(() => ({}));
-    if (res.ok && data.reply) showAnswer(data.reply);
-    else showAnswer(t("errors")[data.error] || t("errors").default, true);
-  } catch {
-    showAnswer(t("errors").buddy_unavailable, true);
+    if (res.ok && (res.headers.get("content-type") || "").includes("ndjson")) {
+      await readStream(res, (delta) => {
+        start();
+        textNode.appendData(delta); // plain text only, never HTML
+      });
+      if (!started) throw Object.assign(new Error("empty"), { code: "buddy_unavailable" });
+    } else {
+      const data = await res.json().catch(() => ({}));
+      if (res.ok && data.reply) {
+        start();
+        textNode.appendData(data.reply);
+      } else throw Object.assign(new Error("failed"), { code: data.error });
+    }
+  } catch (err) {
+    clearTimeout(skeletonTimer);
+    const msg = t("errors")[err.code] || t("errors").buddy_unavailable;
+    // Keep any partial story, and add the error below it.
+    if (started && textNode?.length) {
+      answer.classList.add("error");
+      textNode.appendData("\n\n" + msg);
+    } else showAnswer(msg, true);
   } finally {
+    clearTimeout(skeletonTimer);
+    answer.removeAttribute("aria-busy");
+    $("#thinking").textContent = "";
     sendBtn.disabled = false;
+    sendBtn.removeAttribute("aria-busy");
   }
 });
 
