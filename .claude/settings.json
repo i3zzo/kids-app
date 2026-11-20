@@ -24,6 +24,12 @@
         "source": "github",
         "repo": "headroomlabs-ai/headroom"
       }
+    },
+    "omc": {
+      "source": {
+        "source": "github",
+        "repo": "Yeachan-Heo/oh-my-claudecode"
+      }
     }
   },
   "enabledPlugins": {
@@ -34,7 +40,11 @@
     "claude-md-management@claude-plugins-official": true,
     "task-observer@one-skill-to-rule-them-all": true,
     "claude-mem@thedotmack": true,
-    "headroom@headroom-marketplace": true
+    "headroom@headroom-marketplace": true,
+    "supabase@claude-plugins-official": true,
+    "vercel@claude-plugins-official": true,
+    "chrome-devtools-mcp@claude-plugins-official": true,
+    "oh-my-claudecode@omc": true
   },
   "env": {
     "DO_NOT_TRACK": "1",

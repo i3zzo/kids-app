@@ -40,3 +40,24 @@ Both are switched on in `settings.json`. `settings.json` also sets
   (undo with `headroom unwrap claude`).
 - Add `export HEADROOM_TELEMETRY=off` to your shell profile so the beacon also
   stays off when you run `headroom` outside Claude Code.
+
+## Added from the reel: Supabase, Vercel, Chrome DevTools MCP, oh-my-claudecode
+
+| Plugin | From | Needs on your side |
+|---|---|---|
+| supabase | claude-plugins-official | Sign in to Supabase when Claude first uses it. Use a dev project, never one with real child data. |
+| vercel | claude-plugins-official | Sign in to Vercel when Claude first uses it. |
+| chrome-devtools-mcp | claude-plugins-official | Node.js and Google Chrome installed. It opens and controls a Chrome window. |
+| oh-my-claudecode | Yeachan-Heo/oh-my-claudecode | Node.js. Optional `omc` CLI and tmux for its multi-CLI "team" mode. |
+
+### Things to know about oh-my-claudecode
+- Very heavy: it adds about 30 hooks (every prompt, tool call, stop and
+  compaction), its own MCP server and many agents and skills. It changes how
+  Claude behaves in every session in this repo.
+- It has a `PermissionRequest` hook that auto-approves Bash commands it
+  considers safe, so you will see fewer permission prompts than you expect.
+- `/ask codex`, `/ask gemini` and `omc team` send your code to other AI
+  providers (OpenAI, Google, etc.). Do not use them on anything with real
+  user data.
+- If sessions feel slow or noisy, turn it off in `.claude/settings.json` by
+  setting `"oh-my-claudecode@omc": false`.
