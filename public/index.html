@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>صديقي بادي</title>
+  <link rel="stylesheet" href="/styles.css">
+  <link rel="icon" href="/buddy.svg" type="image/svg+xml">
+</head>
+<body>
+  <header class="top">
+    <svg class="logo" width="56" height="56" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><circle cx="32" cy="34" r="26" fill="#ffd166"/><circle cx="23" cy="30" r="4" fill="#073b4c"/><circle cx="41" cy="30" r="4" fill="#073b4c"/><path d="M22 42c6 6 14 6 20 0" stroke="#073b4c" stroke-width="3" fill="none" stroke-linecap="round"/><circle cx="32" cy="6" r="4" fill="#ef476f"/><path d="M32 10v4" stroke="#ef476f" stroke-width="3"/></svg>
+    <h1 data-i18n="title">صديقي بادي</h1>
+    <button id="lang-toggle" class="lang" type="button">English</button>
+  </header>
+
+  <main>
+    <p class="intro" data-i18n="intro">مرحبًا! أنا بادي. اختر ماذا تريد اليوم:</p>
+
+    <div class="modes" role="tablist">
+      <button type="button" class="mode active" data-mode="story" role="tab" aria-selected="true">
+        <span class="emoji" aria-hidden="true">📖</span><span data-i18n="modeStory">اصنع قصة</span>
+      </button>
+      <button type="button" class="mode" data-mode="question" role="tab" aria-selected="false">
+        <span class="emoji" aria-hidden="true">❓</span><span data-i18n="modeQuestion">اسأل سؤالًا</span>
+      </button>
+    </div>
+
+    <form id="ask-form">
+      <label for="message" class="sr-only" data-i18n="placeholderStory">عن ماذا تريد القصة؟ مثلاً: جمل صغير يحب البحر</label>
+      <textarea id="message" placeholder="عن ماذا تريد القصة؟ مثلاً: جمل صغير يحب البحر" maxlength="500" rows="3" required></textarea>
+      <div class="row">
+        <span id="count" class="count">0/500</span>
+        <button type="submit" id="send"><span data-i18n="send">أرسل</span></button>
+      </div>
+    </form>
+
+    <section id="answer" class="answer" aria-live="polite" hidden></section>
+    <p id="thinking" class="sr-only" aria-live="polite"></p>
+
+    <p class="note" data-i18n="safetyNote">لا تكتب اسمك الكامل أو رقم هاتفك أو عنوانك. إذا شعرت بالحزن أو الخوف، تحدث مع أحد والديك أو معلمك.</p>
+  </main>
+
+  <script src="/app.js" type="module"></script>
+</body>
+</html>

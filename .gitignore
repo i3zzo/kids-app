@@ -1,0 +1,6 @@
+node_modules/
+.env
+omniroute.env
+omniroute-data/
+*.log
+.DS_Store

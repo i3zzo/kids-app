@@ -1,0 +1,32 @@
+{
+  "conditions": {
+    "network": "DevTools Slow 4G",
+    "offline": false,
+    "latency": 562.5,
+    "downloadThroughput": 180000,
+    "uploadThroughput": 84375,
+    "cpuThrottlingRate": 4,
+    "runs": 5,
+    "viewport": "390x844",
+    "browser": "157.0.8103.78"
+  },
+  "load": {
+    "cold": {
+      "fcp": 1244,
+      "lcp": 1316,
+      "load": 1252,
+      "bytes": 10044
+    },
+    "warm": {
+      "fcp": 1212,
+      "lcp": 1244,
+      "load": 1227,
+      "bytes": 10044
+    }
+  },
+  "ask": {
+    "firstAnswerTextMs": 2835,
+    "fullAnswerMs": 2835,
+    "statesSeen": ""
+  }
+}
