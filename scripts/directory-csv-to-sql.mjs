@@ -40,7 +40,8 @@ const num = (v) => {
 
 const COLS = ['ref', 'category', 'name_ar', 'name_en', 'governorate', 'area_ar', 'area_en', 'address', 'description_ar', 'description_en',
   'min_age_months', 'max_age_months', 'phone', 'whatsapp', 'instagram', 'website', 'hours_ar', 'hours_en',
-  'price_min_kwd', 'price_max_kwd', 'price_unit', 'price_note_ar', 'price_note_en', 'source_url', 'source_checked_on'];
+  'price_min_kwd', 'price_max_kwd', 'price_unit', 'price_note_ar', 'price_note_en', 'source_url', 'source_checked_on',
+  'trending_until', 'trending_note_ar', 'trending_note_en'];
 const NUMERIC = new Set(['min_age_months', 'max_age_months', 'price_min_kwd', 'price_max_kwd']);
 
 const rows = parseCsv(readFileSync(file, 'utf8'));

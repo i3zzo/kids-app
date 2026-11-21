@@ -378,8 +378,8 @@ export async function setGuideStepDone(familyId: string, childId: string, stepId
   else check(await supabase.from('guide_progress').delete().eq('child_id', childId).eq('step_id', stepId));
 }
 
-export type PlaceCategory = 'activity' | 'nursery' | 'school' | 'hospital' | 'paediatrician' | 'toy_store' | 'clothing_store';
-export const PLACE_CATEGORIES: PlaceCategory[] = ['hospital', 'paediatrician', 'nursery', 'school', 'activity', 'toy_store', 'clothing_store'];
+export type PlaceCategory = 'medical_centre' | 'activity' | 'nursery' | 'school' | 'hospital' | 'paediatrician' | 'toy_store' | 'clothing_store';
+export const PLACE_CATEGORIES: PlaceCategory[] = ['hospital', 'medical_centre', 'paediatrician', 'nursery', 'school', 'activity', 'toy_store', 'clothing_store'];
 export type Governorate = 'capital' | 'hawalli' | 'farwaniya' | 'mubarak_al_kabeer' | 'ahmadi' | 'jahra';
 export const GOVERNORATES: Governorate[] = ['capital', 'hawalli', 'farwaniya', 'mubarak_al_kabeer', 'ahmadi', 'jahra'];
 export type Place = {
@@ -449,6 +449,62 @@ export async function listOffers(todayDay: string, forChild?: { ageMonths: numbe
     q = q.lte('min_age_months', forChild.ageMonths).gte('max_age_months', forChild.ageMonths).or(`only_gender.is.null,only_gender.eq.${forChild.gender}`);
   }
   return check(await q.order('ends_on').order('id').limit(50)) as Offer[];
+}
+
+// ---------------------------------------------------------------- events and trending places
+export type KidsEvent = {
+  id: string;
+  title_ar: string;
+  title_en: string;
+  venue_ar: string | null;
+  venue_en: string | null;
+  governorate: Governorate | null;
+  area_ar: string | null;
+  area_en: string | null;
+  description_ar: string | null;
+  description_en: string | null;
+  starts_on: string;
+  ends_on: string;
+  hours_ar: string | null;
+  hours_en: string | null;
+  price_min_kwd: number | null;
+  price_max_kwd: number | null;
+  price_note_ar: string | null;
+  price_note_en: string | null;
+  url: string | null;
+  source_checked_on: string;
+  verified_on: string | null;
+};
+export const EVENTS_PAGE = 20;
+/** Events that haven't ended, soonest first. Uses the partial (ends_on, starts_on, id) index. */
+export async function listKidsEvents(todayDay: string, page = 0) {
+  const from = page * EVENTS_PAGE;
+  return check(
+    await supabase
+      .from('kids_events')
+      .select('id, title_ar, title_en, venue_ar, venue_en, governorate, area_ar, area_en, description_ar, description_en, starts_on, ends_on, hours_ar, hours_en, price_min_kwd, price_max_kwd, price_note_ar, price_note_en, url, source_checked_on, verified_on')
+      .gte('ends_on', todayDay)
+      .order('ends_on')
+      .order('starts_on')
+      .order('id')
+      .range(from, from + EVENTS_PAGE - 1),
+  ) as KidsEvent[];
+}
+export type TrendingPlace = Pick<Place, 'id' | 'category' | 'name_ar' | 'name_en' | 'governorate' | 'area_ar' | 'area_en'> & {
+  trending_note_ar: string | null;
+  trending_note_en: string | null;
+};
+/** Places the team marks as new or trending, while the mark lasts. */
+export async function listTrendingPlaces(todayDay: string) {
+  return check(
+    await supabase
+      .from('places')
+      .select('id, category, name_ar, name_en, governorate, area_ar, area_en, trending_note_ar, trending_note_en')
+      .gte('trending_until', todayDay)
+      .order('trending_until')
+      .order('id')
+      .limit(20),
+  ) as TrendingPlace[];
 }
 
 // ---------------------------------------------------------------- tips
