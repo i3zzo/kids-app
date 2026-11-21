@@ -48,6 +48,7 @@ Yahal helps you and your partner organise everything about your children in Kuwa
 • Step-by-step government guides: birth certificate, civil ID, passport, residency, health centre and school.
 • A directory of hospitals, clinics, nurseries, schools and activities, with call, WhatsApp and map buttons.
 • Daily tips for your child's age on sleep, feeding, activities, learning and health.
+• Support for children with special needs: tips, supplies, therapy reminders and disability services guides.
 
 Privacy first: your data is kept on servers in Kuwait, we never ask for civil ID or passport numbers, and you can download your data or delete your account at any time.
 
@@ -76,7 +77,7 @@ Use a **demo family** with made-up names, never a real child.
 | --- | --- | --- | --- | --- |
 | Phone number | Yes | Yes | No | Sign-in |
 | Name (child's first name, family name) | Yes | Yes | No | App features |
-| Health (vaccination records) | Yes | Yes | No | App features |
+| Health (vaccination records; optional special needs, a short note and whether the child has a disability card) | Yes | Yes | No | App features |
 | Other user content (calendar, supplies) | Yes | Yes | No | App features |
 | Device ID (push notification token) | Yes | Yes | No | Reminders |
 

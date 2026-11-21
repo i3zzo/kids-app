@@ -100,6 +100,19 @@ function Directory() {
   const [gov, setGov] = useState<Governorate | 'all'>('all');
   // Special needs: off, any tag, or one need.
   const [need, setNeed] = useState<SpecialNeed | 'any' | null>(null);
+  // If a child in the family has special needs, start with the special needs
+  // filter on (any need). Only once, so the parent can switch it off.
+  useEffect(() => {
+    let live = true;
+    listChildSupport()
+      .then((rows) => {
+        if (live && rows.some((r) => r.needs.length > 0)) setNeed((n) => n ?? 'any');
+      })
+      .catch(() => {});
+    return () => {
+      live = false;
+    };
+  }, []);
   const [search, setSearch] = useState('');
   const [query, setQuery] = useState('');
   const [pages, setPages] = useState<Place[][]>([]);
