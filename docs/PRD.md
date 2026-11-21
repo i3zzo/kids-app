@@ -2,10 +2,10 @@
 
 | | |
 | --- | --- |
-| **Working title** | Kids App (Kuwait) — final brand name to be decided |
+| **Working title** | **Yahal · ياهل** (recommended name, see section 16) |
 | **Owner** | Ezzo |
-| **Status** | Draft v0.1 — for review |
-| **Date** | 20 November 2026 |
+| **Status** | Draft v0.2 — updated with Ezzo's decisions (section 15) |
+| **Date** | 20 November 2026 (v0.1), 21 November 2026 (v0.2) |
 | **Platforms** | iOS and Android (mobile first), web for partners and admin |
 | **Languages** | Arabic (default, right-to-left) and English |
 
@@ -61,11 +61,11 @@ A single app for parents in Kuwait that organises everything about raising a chi
 | **Provider (clinic, nursery, academy)** | Business owner or receptionist. | Receiving bookings, showing availability, promoting offers, getting paid. |
 | **App admin (Ezzo's team)** | Operations staff. | Approving providers, curating content, managing offers and commissions. |
 
-Primary user: parents and guardians of children aged **0–10** living in Kuwait, both citizens and residents. One family account can have two parents (shared access) and several children.
+Primary user (decided): **all** parents and guardians of children aged **0–10** living in Kuwait, whatever their nationality. One family account can have two parents (shared access) and several children.
 
-## 5. Proposed MVP vs. future features
+## 5. MVP vs. future features
 
-> **This split is a proposal** for Ezzo to confirm. The principle: launch first with features that are useful on day one **without** partners (profiles, calendar, supplies, guides, AI tips), then add the marketplace once enough parents use the app and partners are signed.
+> **Confirmed by Ezzo (21 Nov 2026):** booking, payments and commissions (including medical commissions) move to Phase 2. The principle: launch first with features that are useful on day one **without** partners (profiles, calendar, supplies, guides, AI tips), then add the marketplace once enough parents use the app and partners are signed.
 
 | Area | MVP (Phase 1) | Phase 2 | Phase 3 and later |
 | --- | --- | --- | --- |
@@ -90,13 +90,14 @@ Priorities use **P0** (must have for launch), **P1** (should have), **P2** (nice
 - Onboarding asks only what is needed: child's name, birth date (or due date for expected babies — P1), gender. Everything else is optional.
 
 ### 6.2 Child profile (P0)
-- Fields: name, photo (optional), birth date, gender, nationality (Kuwaiti / non-Kuwaiti, used for government guides), blood type, allergies, chronic conditions, paediatrician, nursery or school, clothing and shoe size (P1).
+- **Basic data only (decided):** first name, birth date (age is calculated), gender, and optional basics: photo, nationality group (Kuwaiti / GCC / other, used only to pick the right government guides), blood type, allergies, chronic conditions, paediatrician, nursery or school, clothing and shoe size (P1).
+- **No ID numbers.** The app does not ask for or store civil ID, passport or nationality file numbers. Government guides tell parents which documents to bring; they don't collect them.
 - Each child has their **own separate** calendar, supplies list, government steps and AI suggestions. A family view combines them.
 - Age is calculated automatically and drives the content shown (in weeks for babies, months up to 2 years, then years).
 - Growth tracking with WHO growth charts (P1).
 
 ### 6.3 Calendar and reminders (P0)
-- **Vaccinations:** when a child is created, the app generates the vaccination schedule based on Kuwait Ministry of Health guidance for that birth date. Parents mark each dose as done (date, clinic) or reschedule. The source and version of the schedule are shown, with a note to confirm with the child's clinic.
+- **Vaccinations (decided):** the source is the **Kuwait Ministry of Health (MOH) national immunisation schedule**, covering every age from birth to 10 years (including school-entry doses). When a child is created, the app generates that schedule for the child's birth date. Parents mark each dose as done (date, clinic) or reschedule. The source and version of the schedule are shown, with a note to confirm with the child's clinic.
 - **Custom events:** training, classes, birthdays, doctor visits, school events, any activity. Fields: title, child(ren), date/time, repeat, location, notes, reminder time.
 - Views: day, week, month, and per-child filter. Each child has a colour.
 - Push notifications for reminders; both parents receive them (configurable).
@@ -105,6 +106,9 @@ Priorities use **P0** (must have for launch), **P1** (should have), **P2** (nice
 ### 6.4 Supplies tracker (P0)
 - Per-child list of supplies grouped by category: **feeding** (formula/milk type, bottles), **diapering** (diaper brand and size, wipes), **health** (thermometer, nasal aspirator, medicine, saline), **teething** (teethers), **learning and play** (educational toys), **clothing**.
 - Suggested starter list based on the child's age; parents can add, remove or edit items.
+- **Brand suggestions (decided):** for milk/formula, diapers, wipes and baby-care items, the app suggests **brands that are actually sold in Kuwait's big supermarkets** (for example The Sultan Center, LuLu Hypermarket, Carrefour and the co-operative societies). Examples to verify with a store check before launch: diapers — Pampers, Huggies, Molfix, BabyJoy; formula — Aptamil, Bebelac, NAN, S-26, Similac, Enfamil. Brands are listed neutrally (alphabetical, no paid ranking in the MVP), with sizes and stages by age.
+- **Infant formula rule:** formula screens show that breastfeeding is recommended where possible and that a doctor should advise on formula choice, and they carry no promotions or discount codes until the rules on marketing breast-milk substitutes in Kuwait have been checked.
+- **Gender (decided):** supply suggestions change by gender **only for clothing, milk and diapers** (for example boy/girl diaper ranges and clothing styles, and gender-specific product lines where a brand offers them). Everything else (calendar, health, sleep, learning, activities, guides) is the same for all children.
 - Each item: name, brand, size/type, current quantity, unit, "low" threshold.
 - "Running low" and "missing" reminders. Quick "+ / −" buttons to update quantity.
 - Size change hints, e.g. "Diaper size 3 usually fits around 6–10 kg — time to check the next size?" (P1).
@@ -120,6 +124,7 @@ Priorities use **P0** (must have for launch), **P1** (should have), **P2** (nice
 
 ### 6.6 Government paperwork guides (P0)
 - Step-by-step guides, written in plain Arabic and English, each with: who it applies to (citizens / residents), required documents, where to go (office or e-service), fees if known, typical time, and a checklist.
+- **Audience (decided):** all parents living in Kuwait, whatever their nationality. Each guide has a Kuwaiti-citizen version and a resident (expat) version where the steps differ, and the app picks the right one from the child's nationality group.
 - Proposed first guides (to be verified with official sources before publishing):
   - Birth notification and birth certificate
   - Civil ID for a newborn (PACI)
@@ -142,7 +147,7 @@ Priorities use **P0** (must have for launch), **P1** (should have), **P2** (nice
   - **Supplies:** what to prepare for the next stage.
 - MVP approach: a curated, reviewed **content library by age band** (0–3 months, 3–6, 6–12, 1–2 years, 2–3, 3–5, 5–7, 7–10), with AI used to personalise and summarise it for each child. This keeps advice consistent and reviewable.
 - Phase 2: a chat assistant parents can ask questions, grounded in the reviewed library, with clear disclaimers and "see a doctor" escalation for health red flags (for example high fever in a baby under 3 months).
-- AI never receives the child's name or civil ID; it receives age, gender and the minimum profile data needed.
+- **Data sent to the AI (decided):** only the child's first name, age, gender and the basic profile data needed for the answer. Never ID numbers, phone numbers or addresses. The existing redaction module (section 13) strips any that a parent types by mistake.
 
 ### 6.8 Offers: toys and kids' clothing (P1)
 - A feed of current offers from toy stores and kids' clothing brands, filterable by child age, size and gender.
@@ -178,7 +183,7 @@ Priorities use **P0** (must have for launch), **P1** (should have), **P2** (nice
 
 ## 8. Business model
 
-1. **Commission per booking** (Phase 2): a percentage of each paid booking through the app (doctors, activities, education, nurseries). Typical marketplace rates are 5–15%; the exact rate is to be negotiated per category.
+1. **Commission per booking** (Phase 2, decided — not in the MVP): a percentage of each paid booking through the app (doctors, activities, education, nurseries). Typical marketplace rates are 5–15%; the exact rate is to be negotiated per category.
 2. **Partner discounts:** partners give app users exclusive discounts in exchange for bookings and visibility. This is the main reason for parents to book through the app instead of directly.
 3. **Featured listings and sponsored offers:** partners pay to appear at the top of a category or in the offers feed (clearly labelled "Sponsored").
 4. **Premium family subscription (Phase 3, optional):** advanced AI planning, unlimited family members, document vault, extra discounts.
@@ -213,7 +218,7 @@ Priorities use **P0** (must have for launch), **P1** (should have), **P2** (nice
 - Explicit parental consent at sign-up; clear privacy notice in Arabic and English.
 - Encryption in transit (TLS 1.2+) and at rest; health fields and documents encrypted at the field or file level.
 - Row-level access control: only members of a family can read that family's children's data. Partners only see the booking details they need (child's first name, age, parent contact).
-- Data residency: prefer hosting in the region (GCC) if required by regulation or partners; to be confirmed.
+- **Data residency (decided): local hosting in Kuwait.** All personal data (accounts, children, calendar, supplies) and backups are stored in a data centre inside Kuwait. See section 11 for what this means for the stack.
 - Parents can export and permanently delete their family's data from within the app.
 - No selling of personal data. No advertising based on children's data. Offers personalisation uses age band and size only, and only with opt-in.
 - AI: send only minimal, de-identified data to the AI provider (age, gender, relevant flags), use providers that do not train on API data, and do not log children's details. This matches the safety approach already in the starter app (redaction of phone numbers, emails and civil ID numbers).
@@ -254,7 +259,8 @@ Target budgets (proposed): home screen usable in under 3 seconds on a mid-range 
 > Proposal for discussion; the final stack will be decided at the start of development.
 
 - **Mobile app:** cross-platform (React Native/Expo or Flutter) for iOS and Android with full RTL support.
-- **Backend:** Supabase (Postgres, authentication, row-level security, storage) or a Node.js API on Postgres. Postgres fits the relational data (families, children, events, supplies, providers, bookings).
+- **Backend:** Postgres with authentication, row-level security and file storage, **hosted in Kuwait** (decided). Supabase's managed cloud does not offer a Kuwait region, so the options are self-hosting Supabase (open source) or a Node.js API on Postgres on a Kuwait-based provider (a cloud region in Kuwait or a local data centre). Trade-off: self-hosting means we run backups, updates and monitoring ourselves. Postgres fits the relational data (families, children, events, supplies, providers, bookings).
+- **AI and hosting:** the AI provider may be outside Kuwait. Only the minimal data in section 6.7 is sent, and this must be covered in the privacy notice and legal review.
 - **Notifications:** scheduled jobs plus push (APNs / FCM), with SMS/WhatsApp as an optional channel.
 - **AI:** server-side only, through the OmniRoute gateway already set up in the starter app, with a reviewed content library and child-safety rules.
 - **Admin and partner portals:** web app.
@@ -266,10 +272,11 @@ Target budgets (proposed): home screen usable in under 3 seconds on a mid-range 
 | --- | --- |
 | `family` | id, created_at |
 | `parent` | id, family_id, name, phone, language, role |
-| `child` | id, family_id, name, birth_date, gender, nationality_type, health_info (encrypted), sizes |
+| `child` | id, family_id, first_name, birth_date, gender, nationality_group, health_info (encrypted), sizes — no ID numbers |
 | `event` | id, child_id, type (vaccination / activity / appointment / custom), title, starts_at, repeat_rule, status, reminder |
 | `vaccine_schedule` | id, version, source, vaccine, dose, age_due |
-| `supply_item` | id, child_id, category, name, brand, size, quantity, unit, low_threshold |
+| `supply_item` | id, child_id, category, name, brand_id, size, quantity, unit, low_threshold |
+| `brand` / `product` | brand, product line, category, stage/size, gender (for clothing, milk, diapers), sold_at (supermarkets) |
 | `gov_guide` / `guide_step` / `child_guide_progress` | guide content, steps, per-child status |
 | `provider` | id, category, names (ar/en), area, location, age_range, contact, verified |
 | `offer` | id, provider_id, title (ar/en), age_range, sizes, valid_from, valid_to, code |
@@ -285,7 +292,9 @@ Target budgets (proposed): home screen usable in under 3 seconds on a mid-range 
 | 2. Marketplace | Partner portal, booking and payment, discounts, reviews, offers from partners, commission | 8–10 weeks |
 | 3. Growth | Premium subscription, personalised plans, reorder links, deeper integrations | Ongoing |
 
-Durations are rough planning figures, not estimates from a team, and will be refined once the team and stack are chosen.
+**Team (decided):** the app will be built by Claude through "vibe coding" — Ezzo describes and reviews features, Claude writes the code, tests and pull requests in `i3zzo/kids-app`. Ezzo approves every merge. Things that still need people outside the app: a paediatrician or MOH-based content check, a legal review, store listings (Apple/Google developer accounts), and the Kuwait hosting account.
+
+Durations are rough planning figures, not team estimates.
 
 ## 13. Relationship to the existing starter app
 
@@ -295,7 +304,7 @@ How it relates to this PRD:
 - **Different main user.** This PRD describes a **parent-facing** organiser for children aged 0–10; Buddy is **child-facing**.
 - **Reusable parts.** The OmniRoute AI integration, safety/redaction module, streaming, bilingual UI approach and performance benchmarking can be reused for the AI suggestions in section 6.7.
 - **Possible future feature.** Buddy can become a "Kids' Corner" inside the parent app (Phase 3), opened by a parent for a specific child, with parental controls and time limits.
-- **Decision needed:** keep Buddy as a separate track, fold it into the parent app later, or pause it while the MVP is built (see Open Questions).
+- **Decided:** Buddy uses only the child's first name, age and basic data — no ID numbers. Its AI and safety code will be reused for section 6.7. As a child-facing feature it stays out of the parent MVP and can become the "Kids' Corner" later.
 
 ## 14. Risks and mitigations
 
@@ -308,19 +317,74 @@ How it relates to this PRD:
 | Low engagement after the newborn stage | Age-specific content up to 10 years, activities and school features for older children |
 | AI gives unsafe or culturally inappropriate advice | Reviewed content library, guardrails, red-flag escalation, feedback button on every suggestion |
 
-## 15. Open questions
+## 15. Decisions and remaining questions
 
-1. **App name and brand** — Arabic and English names?
-2. **MVP split** — does the proposed Phase 1 / Phase 2 split in section 5 match your priorities, or should booking be in the MVP?
-3. **Target families** — Kuwaiti citizens only at first, or residents too (affects government guides)?
-4. **Medical commissions** — are commissions from doctors and clinics allowed under Ministry of Health rules? Legal advice needed.
-5. **Vaccination schedule source** — who will provide and review the official Kuwait MOH schedule (a partner paediatrician)?
-6. **Payments** — which Kuwaiti payment gateway, and will the app collect payment or only reserve?
-7. **Data hosting** — is local or GCC hosting required?
-8. **Buddy** — what should happen with the existing child-facing starter app (section 13)?
-9. **Team and budget** — in-house developers or an agency; target launch date?
-10. **Gender-specific content** — which sections should change by gender (e.g. clothing, some activities), and which should stay the same?
-11. **Supplies data** — should the app suggest specific brands of milk and diapers, or only types? (Brand suggestions may need care to stay neutral, and infant formula marketing may have regulatory limits.)
+### 15.1 Decisions (Ezzo, 21 November 2026)
+
+| Question | Decision |
+| --- | --- |
+| App name and brand | Claude to propose a catchy name, colours and logo — see section 16 (Yahal · ياهل recommended, awaiting Ezzo's pick) |
+| MVP split | As proposed; **booking moves to Phase 2** |
+| Target families | **All parents in Kuwait**, any nationality |
+| Medical commissions | **Phase 2** (legal check then) |
+| Vaccination schedule | **Kuwait MOH schedule for every age**, 0–10 |
+| Payments | **Phase 2** |
+| Data hosting | **Local, in Kuwait** |
+| Buddy / child data | Only **first name, age and basic data**; **no ID numbers** |
+| Team | **Built by Claude** (vibe coding), Ezzo reviews and merges |
+| Gender-specific content | **Clothing, milk and diapers** only |
+| Supplies brands | Suggest **brands sold in Kuwait's big supermarkets** |
+
+### 15.2 Still open
+
+1. Final pick of the name (section 16), and a trademark / app-store name check.
+2. Which Kuwait hosting provider (cloud region in Kuwait or local data centre).
+3. Who checks health content against MOH guidance before launch (a paediatrician advisor is recommended).
+4. Rules on marketing infant formula in Kuwait, before any formula offers or promotions.
+5. Payment gateway choice (Phase 2).
+
+## 16. Brand proposal
+
+### 16.1 Name
+
+**Recommended: Yahal · ياهل** — the Kuwaiti/Gulf word for a child ("ياهل", plural "يهال"). It is short, warm, instantly local, easy to say in both languages, and covers all ages from baby to 10 — not only newborns.
+
+- **Tagline (AR):** كل شي يخص يهالك… بمكان واحد
+- **Tagline (EN):** Everything for your little ones, in one place
+
+Alternatives:
+
+| Name | Meaning / why | Watch out |
+| --- | --- | --- |
+| **Nunu · نونو** | Gulf word for a baby; very cute and catchy | Feels baby-only, less fitting for a 9-year-old |
+| **Dana Kids · دانة** | "Dana" is a large pearl — Kuwait's pearl-diving heritage | Common girl's name; less obviously about children |
+| **Qurra · قُرّة** | From "قرة عين" (joy of the eye) | Harder to pronounce for English speakers |
+
+Before committing: check trademark availability in Kuwait, App Store / Google Play name availability, and the domain and Instagram handle.
+
+### 16.2 Colours
+
+Inspired by the Gulf sea, the desert and Kuwait's sunshine; friendly but calm enough for health information.
+
+| Role | Name | Hex | Use |
+| --- | --- | --- | --- |
+| Primary | Gulf Teal | `#0E7C86` | Buttons, headers, links (4.95:1 contrast on white — passes AA for text) |
+| Background | Sand | `#F6E7CF` / `#FFFBF5` | Cards and app background |
+| Accent | Coral | `#FF7A59` | Highlights, reminders, "running low" badges — use **Ink** text on it, not white (white on coral is 2.57:1 and fails) |
+| Accent 2 | Sunshine | `#FFC845` | Achievements, offers, small highlights |
+| Text | Ink | `#1F2A37` | Body text (11.9:1 on Sand) |
+
+Each child can also pick a personal colour for the calendar from a soft set (e.g. sky, mint, lilac, peach), checked for contrast.
+
+Suggested fonts: **Tajawal** or **Cairo** for Arabic and matching English (both free Google Fonts with Arabic and Latin), or **IBM Plex Sans Arabic**.
+
+### 16.3 Logo concept
+
+![Yahal brand board](brand/brand-board.png)
+
+- **Icon** (`docs/brand/logo-icon.svg`): a smiling child's face on Gulf Teal, sitting above a sea wave, with a small **pearl** in the corner as a nod to Kuwait's heritage. Rounded-square shape ready for app stores.
+- **Wordmark:** "ياهل" in Arabic above "Yahal" in English, in Tajawal Bold.
+- This is a starting concept made in code; a designer can refine it before launch (final icon at 1024×1024 for the App Store, adaptive icon for Android).
 
 ---
 
