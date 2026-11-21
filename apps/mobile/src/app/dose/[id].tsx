@@ -9,6 +9,7 @@ import { parseDay, toDay } from '@/lib/dates';
 import { formatDay, useI18n } from '@/lib/i18n';
 import { useLoad } from '@/lib/useLoad';
 import { colors } from '@/theme';
+import { HealthNote } from '@/components/HealthNote';
 
 export default function Dose() {
   const { t } = useI18n();
@@ -45,6 +46,7 @@ function DoseForm({ dose }: { dose: ChildVaccination }) {
   const v = dose.vaccine_doses;
   return (
     <Screen>
+      <HealthNote />
       <Title>{locale === 'ar' ? v.name_ar : v.name_en}</Title>
       <Muted>{locale === 'ar' ? v.dose_label_ar : v.dose_label_en}</Muted>
       <Card style={{ backgroundColor: colors.sand, borderColor: colors.sand }}>

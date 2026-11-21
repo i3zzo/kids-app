@@ -108,3 +108,4 @@ In production: `npx supabase secrets set --env-file supabase/functions/.env`. Th
 - [Step 5: Explore — government guides, directory and offers](docs/explain/05-explore.md)
 - [Step 6: admin panel, roles and review before publishing](docs/explain/06-admin.md)
 - [Step 7: tips by age, and AI personalisation](docs/explain/07-tips.md)
+- [Step 8: privacy — export your data, delete your account](docs/explain/08-privacy.md)

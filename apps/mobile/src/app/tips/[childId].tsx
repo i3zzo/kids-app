@@ -4,6 +4,7 @@
 import { useLocalSearchParams } from 'expo-router';
 import { useEffect, useRef, useState } from 'react';
 import { View } from 'react-native';
+import { HealthNote } from '@/components/HealthNote';
 import { Button, Card, Dot, ErrorText, Muted, Row, Screen, Skeleton, Txt } from '@/components/ui';
 import { getChild, listTips, streamTipsAI, type AiError } from '@/lib/api';
 import { ageLabel, ageParts } from '@/lib/dates';
@@ -54,7 +55,7 @@ export default function Tips() {
           {t.tipsFor} {ageLabel(data.child.birth_date, locale)} · {data.child.first_name}
         </Txt>
       </Row>
-      <Muted>{t.tipsDisclaimer}</Muted>
+      <HealthNote />
       {data.tips.length === 0 ? <Muted>{t.noTips}</Muted> : null}
       {TIP_SECTIONS.map((sec) => {
         const list = data.tips.filter((tip) => tip.section === sec);

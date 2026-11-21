@@ -264,7 +264,6 @@ const ar = {
   tipOfTheDay: 'نصيحة اليوم',
   allTips: 'كل النصائح',
   tipsFor: 'نصائح لعمر',
-  tipsDisclaimer: 'معلومات عامة للتوعية وليست نصيحة طبية. لأي قلق على صحة طفلك راجع طبيب الأطفال أو المركز الصحي.',
   sec_sleep: 'النوم',
   sec_feeding: 'التغذية',
   sec_activities: 'الأنشطة',
@@ -278,6 +277,22 @@ const ar = {
   aiNotConfigured: 'النصائح المخصّصة غير متاحة حالياً.',
   stop: 'إيقاف',
   noTips: 'لا توجد نصائح لهذا العمر بعد.',
+  // privacy
+  privacyNotice: 'إشعار الخصوصية',
+  readPrivacyNotice: 'اقرأ إشعار الخصوصية',
+  privacyAndData: 'الخصوصية وبياناتك',
+  privacyDraft: 'مسودة بانتظار المراجعة القانونية',
+  exportData: 'تنزيل نسخة من بياناتي',
+  exportHint: 'ملف واحد يحتوي كل ما نحفظه عنك وعن عائلتك: الأطفال والتقويم والتطعيمات والمستلزمات والإعدادات.',
+  exportReady: 'تم تجهيز الملف.',
+  deleteAccount: 'حذف حسابي نهائياً',
+  deleteOwnerWarning: 'أنت مالك العائلة: سيُحذف حسابك والعائلة كلها نهائياً، بما فيها الأطفال والتقويم والتطعيمات والمستلزمات. سيفقد الوالد الآخر الوصول إليها. لا يمكن التراجع.',
+  deleteCoParentWarning: 'سيُحذف حسابك وإعداداتك نهائياً. تبقى العائلة وبياناتها مع مالك العائلة. لا يمكن التراجع.',
+  typeToConfirm: 'للتأكيد اكتب: حذف',
+  deleteConfirmWord: 'حذف',
+  deleteNow: 'احذف الآن',
+  staffCannotDelete: 'هذا حساب ضمن فريق ياهل. اطلب من المشرف إزالتك من الفريق أولاً.',
+  healthNote: 'معلومات عامة وليست نصيحة طبية. استشر طبيب طفلك دائماً. في الحالات الطارئة اتصل بـ 112.',
 };
 
 type Strings = typeof ar;
@@ -533,7 +548,6 @@ const en: Strings = {
   tipOfTheDay: 'Tip of the day',
   allTips: 'All tips',
   tipsFor: 'Tips for age',
-  tipsDisclaimer: "General information, not medical advice. If you are worried about your child's health, see your paediatrician or health centre.",
   sec_sleep: 'Sleep',
   sec_feeding: 'Feeding',
   sec_activities: 'Activities',
@@ -547,6 +561,22 @@ const en: Strings = {
   aiNotConfigured: 'Personalised tips are not available right now.',
   stop: 'Stop',
   noTips: 'No tips for this age yet.',
+  // privacy
+  privacyNotice: 'Privacy notice',
+  readPrivacyNotice: 'Read the privacy notice',
+  privacyAndData: 'Privacy and your data',
+  privacyDraft: 'Draft awaiting legal review',
+  exportData: 'Download a copy of my data',
+  exportHint: 'One file with everything we keep about you and your family: children, calendar, vaccinations, supplies and settings.',
+  exportReady: 'Your file is ready.',
+  deleteAccount: 'Delete my account permanently',
+  deleteOwnerWarning: "You own this family: your account and the whole family will be deleted for good, including children, calendar, vaccinations and supplies. The other parent will lose access too. This can't be undone.",
+  deleteCoParentWarning: "Your account and settings will be deleted for good. The family and its data stay with the family owner. This can't be undone.",
+  typeToConfirm: 'To confirm, type: DELETE',
+  deleteConfirmWord: 'DELETE',
+  deleteNow: 'Delete now',
+  staffCannotDelete: 'This is a Yahal team account. Ask a super admin to remove you from the team first.',
+  healthNote: "General information, not medical advice. Always check with your child's doctor. In an emergency call 112.",
 };
 
 export const strings = { ar, en };

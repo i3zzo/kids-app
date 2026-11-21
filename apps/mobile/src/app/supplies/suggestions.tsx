@@ -11,6 +11,7 @@ import { useI18n } from '@/lib/i18n';
 import { useFamily } from '@/lib/session';
 import { useLoad } from '@/lib/useLoad';
 import { colors, space } from '@/theme';
+import { HealthNote } from '@/components/HealthNote';
 
 export default function Suggestions() {
   const { t, locale } = useI18n();
@@ -51,6 +52,7 @@ export default function Suggestions() {
 
   return (
     <Screen>
+      <HealthNote />
       <Txt style={{ fontSize: 18, fontWeight: '700' }}>
         {t.suggestedFor} {ageLabel(data.child.birth_date, locale)} · {data.child.first_name}
       </Txt>

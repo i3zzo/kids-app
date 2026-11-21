@@ -10,6 +10,7 @@ import { toDay } from '@/lib/dates';
 import { formatDay, useI18n } from '@/lib/i18n';
 import { useLoad } from '@/lib/useLoad';
 import { colors, space } from '@/theme';
+import { HealthNote } from '@/components/HealthNote';
 
 export default function Vaccines() {
   const { t, locale } = useI18n();
@@ -36,6 +37,7 @@ export default function Vaccines() {
 
   return (
     <Screen>
+      <HealthNote />
       <Title>{child.first_name}</Title>
       <Card style={{ backgroundColor: colors.sand, borderColor: colors.sand }}>
         <Txt style={{ fontSize: 14 }}>{t.scheduleDisclaimer}</Txt>
