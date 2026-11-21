@@ -2,7 +2,9 @@
 // asks for. Each query selects only the columns its screen needs, and related
 // data (e.g. the child's name on an event, the vaccine name on a dose) comes in
 // the same request through Supabase nested selects — no "one query per row".
+import { fetch as streamingFetch } from 'expo/fetch';
 import { supabase } from './supabase';
+import type { TipSection } from './tips';
 
 export const PRIVACY_VERSION = 'privacy-2026-11-draft';
 
@@ -438,4 +440,78 @@ export async function listOffers(todayDay: string, forChild?: { ageMonths: numbe
     q = q.lte('min_age_months', forChild.ageMonths).gte('max_age_months', forChild.ageMonths).or(`only_gender.is.null,only_gender.eq.${forChild.gender}`);
   }
   return check(await q.order('ends_on').order('id').limit(50)) as Offer[];
+}
+
+// ---------------------------------------------------------------- tips
+export type Tip = {
+  id: string;
+  section: TipSection;
+  title_ar: string;
+  title_en: string;
+  body_ar: string;
+  body_en: string;
+};
+/** Reviewed tips for a child's age (in months) and gender. Small public list. */
+export async function listTips(ageMonths: number, gender: Gender) {
+  return check(
+    await supabase
+      .from('tips')
+      .select('id, section, title_ar, title_en, body_ar, body_en')
+      .lte('min_age_months', ageMonths)
+      .gte('max_age_months', ageMonths)
+      .or(`only_gender.is.null,only_gender.eq.${gender}`)
+      .order('sort_order'),
+  ) as Tip[];
+}
+
+export type AgedTip = Tip & { min_age_months: number; max_age_months: number; only_gender: Gender | null };
+/** Tips for several children in one request: every tip overlapping the youngest..oldest age. */
+export async function listTipsForAges(minAge: number, maxAge: number) {
+  return check(
+    await supabase
+      .from('tips')
+      .select('id, section, title_ar, title_en, body_ar, body_en, min_age_months, max_age_months, only_gender')
+      .lte('min_age_months', maxAge)
+      .gte('max_age_months', minAge)
+      .order('sort_order'),
+  ) as AgedTip[];
+}
+
+export type AiError = 'daily_limit' | 'not_configured' | 'failed';
+/**
+ * Asks the server to personalise one section of tips for a child, and passes
+ * the answer to onText piece by piece as it arrives. The server sends the AI
+ * only the child's age in months and gender. Throws an Error whose message is
+ * an AiError.
+ */
+export async function streamTipsAI(childId: string, section: TipSection, lang: 'ar' | 'en', onText: (all: string) => void, signal?: AbortSignal) {
+  const { data } = await supabase.auth.getSession();
+  const token = data.session?.access_token;
+  if (!token) throw new Error('failed');
+  let res: Response;
+  try {
+    res = (await streamingFetch(`${process.env.EXPO_PUBLIC_SUPABASE_URL}/functions/v1/tips-ai`, {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${token}`, apikey: process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY ?? '', 'Content-Type': 'application/json' },
+      body: JSON.stringify({ child_id: childId, section, lang }),
+      signal,
+    })) as unknown as Response;
+  } catch {
+    throw new Error('failed');
+  }
+  if (res.status === 429) throw new Error('daily_limit');
+  if (res.status === 503) throw new Error('not_configured');
+  if (!res.ok || !res.body) throw new Error('failed');
+  const reader = res.body.getReader();
+  const decoder = new TextDecoder();
+  let all = '';
+  for (;;) {
+    const { done, value } = await reader.read();
+    if (done) break;
+    all += decoder.decode(value, { stream: true });
+    onText(all);
+  }
+  all += decoder.decode();
+  if (!all.trim()) throw new Error('failed');
+  onText(all);
 }

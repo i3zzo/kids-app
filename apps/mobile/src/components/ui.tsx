@@ -149,7 +149,7 @@ export function Card({ children, style, onPress, testID }: { children: ReactNode
       </Pressable>
     );
   }
-  return <View style={[styles.card, style]}>{children}</View>;
+  return <View testID={testID} style={[styles.card, style]}>{children}</View>;
 }
 
 /** Lays children out start→end, respecting the language direction. */

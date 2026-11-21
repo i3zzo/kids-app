@@ -89,6 +89,16 @@ npm run dev                    # http://localhost:3001
 
 The first super admin is added once with SQL (see `docs/explain/06-admin.md`). After that, the super admin adds the team from the Staff page.
 
+## Run the AI tips function
+
+```bash
+cp supabase/functions/.env.example supabase/functions/.env   # fill in the OmniRoute URL, key and model
+npx supabase functions serve --env-file supabase/functions/.env
+node --test --experimental-strip-types supabase/functions/_shared/*.test.ts
+```
+
+In production: `npx supabase secrets set --env-file supabase/functions/.env`. The key stays on the server and never goes in the app.
+
 ## Where each build step is explained
 
 - [Step 1: sign-in, family, children, calendar and vaccinations](docs/explain/01-family-children-calendar.md)
@@ -97,3 +107,4 @@ The first super admin is added once with SQL (see `docs/explain/06-admin.md`). A
 - [Step 4: supplies tracker and suggested items by age](docs/explain/04-supplies.md)
 - [Step 5: Explore — government guides, directory and offers](docs/explain/05-explore.md)
 - [Step 6: admin panel, roles and review before publishing](docs/explain/06-admin.md)
+- [Step 7: tips by age, and AI personalisation](docs/explain/07-tips.md)

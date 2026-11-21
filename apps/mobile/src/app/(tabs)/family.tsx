@@ -61,6 +61,9 @@ export default function Family() {
                 <Button title={t.vaccinations} variant="secondary" onPress={() => router.push(`/vaccines/${c.id}`)} />
               </View>
               <View style={{ flex: 1 }}>
+                <Button title={t.tips} variant="secondary" onPress={() => router.push(`/tips/${c.id}`)} />
+              </View>
+              <View style={{ flex: 1 }}>
                 <Button title={t.edit} variant="secondary" onPress={() => router.push(`/child/${c.id}`)} />
               </View>
             </Row>
