@@ -2,7 +2,7 @@
 -- can't be added without one, and nothing is marked as checked by the team.
 begin;
 create extension if not exists pgtap with schema extensions;
-select plan(16);
+select plan(21);
 
 select ok((select count(*) from public.places where ref is not null) >= 270, 'the researched listings are loaded');
 select is((select count(distinct governorate)::int from public.places where category = 'medical_centre'), 6, 'medical centres in every governorate');
@@ -22,7 +22,7 @@ select throws_ok($$ insert into public.places (category, name_ar, name_en, gover
 
 set local role anon;
 select ok((select price_min_kwd from public.places where ref = 'activity-kidzania-kuwait-al-rai') = 14, 'visitors can read prices');
-select is((select count(*)::int from public.places where category = 'school' and governorate = 'jahra'), 2, 'the governorate filter works on the new rows');
+select is((select count(*)::int from public.places where category = 'school' and governorate = 'jahra' and special_needs_services = '{}'), 2, 'the governorate filter works on the new rows');
 reset role;
 
 -- Events and trending
@@ -36,6 +36,19 @@ set local role anon;
 select ok((select count(*) from public.kids_events where ref = 'kuwait-international-book-fair-2026') = 1, 'visitors can read published events');
 select is((select count(*)::int from public.kids_events where title_en = 'Draft event'), 0, 'draft events are hidden');
 select ok((select count(*) from public.places where trending_until >= '2026-11-21') >= 2, 'trending places are readable');
+reset role;
+
+-- Special needs
+select throws_ok($$ insert into public.places (category, name_ar, name_en, governorate, special_needs_services, source_url)
+  values ('therapy_centre', 'x', 'x', 'capital', '{magic}', 'https://example.com') $$, '23514', null, 'only known special-needs tags are allowed');
+select throws_ok($$ insert into public.places (category, name_ar, name_en, governorate, special_needs_services)
+  values ('therapy_centre', 'x', 'x', 'capital', '{autism}') $$, '23514', null, 'a special-needs tag needs a source');
+set local role anon;
+select is((select count(distinct governorate)::int from public.places where special_needs_services <> '{}'), 6, 'special-needs places in all 6 governorates');
+select ok((select count(*) from public.places where category = 'school' and special_needs_services && '{autism,all_needs}'
+  and name_en = 'Kuwait Autism Center School') = 1, 'the autism filter finds the autism school');
+select ok((select count(*) from public.places where category = 'support_service') >= 4
+  and (select count(*) from public.places where category = 'therapy_centre') >= 10, 'therapy centres and PADA offices are listed');
 reset role;
 
 select * from finish();

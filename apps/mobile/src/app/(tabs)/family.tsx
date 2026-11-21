@@ -4,7 +4,7 @@ import { router } from 'expo-router';
 import { useState } from 'react';
 import { Share, View } from 'react-native';
 import { Button, Card, Choice, Dot, ErrorText, Muted, Row, Screen, Skeleton, Txt } from '@/components/ui';
-import { createInvite, listChildren, listParents } from '@/lib/api';
+import { createInvite, listChildren, listChildSupport, listParents } from '@/lib/api';
 import { ageLabel } from '@/lib/dates';
 import { useI18n } from '@/lib/i18n';
 import { useFamily, useSession } from '@/lib/session';
@@ -20,7 +20,12 @@ export default function Family() {
   const [busy, setBusy] = useState(false);
 
   const { data, error, reload } = useLoad(
-    () => Promise.all([listChildren(), listParents(familyId)]).then(([children, parents]) => ({ children, parents })),
+    () =>
+      Promise.all([listChildren(), listParents(familyId), listChildSupport()]).then(([children, parents, support]) => ({
+        children,
+        parents,
+        needs: new Map(support.map((s) => [s.child_id, s.needs])),
+      })),
     [familyId],
   );
 
@@ -56,6 +61,9 @@ export default function Family() {
               <Txt style={{ fontWeight: '700', fontSize: 18, flex: 1 }}>{c.first_name}</Txt>
               <Muted>{ageLabel(c.birth_date, locale)}</Muted>
             </Row>
+            {data.needs.get(c.id)?.length ? (
+              <Muted>{data.needs.get(c.id)!.map((n) => t[`need_${n}`]).join(' · ')}</Muted>
+            ) : null}
             <Row>
               <View style={{ flex: 1 }}>
                 <Button title={t.vaccinations} variant="secondary" onPress={() => router.push(`/vaccines/${c.id}`)} />

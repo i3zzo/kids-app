@@ -61,8 +61,10 @@ Deno.serve(async (req) => {
     const allowed = await db('rpc/claim_ai_request', auth, { method: 'POST', body: '{}' });
     if (allowed !== true) return json(429, { error: 'daily_limit' });
 
+    // Only general tips: tips written for special needs are never sent to the
+    // AI, so nothing about a child's needs leaves our servers.
     const tips = (await db(
-      `tips?select=title_ar,title_en,body_ar,body_en&section=eq.${section}&min_age_months=lte.${ageMonths}&max_age_months=gte.${ageMonths}&or=(only_gender.is.null,only_gender.eq.${gender})&order=sort_order&limit=6`,
+      `tips?select=title_ar,title_en,body_ar,body_en&section=eq.${section}&min_age_months=lte.${ageMonths}&max_age_months=gte.${ageMonths}&or=(only_gender.is.null,only_gender.eq.${gender})&for_needs=eq.%7B%7D&order=sort_order&limit=6`,
       auth,
     )) as Tip[];
     if (!tips.length) return json(404, { error: 'no_tips' });

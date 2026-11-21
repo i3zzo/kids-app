@@ -3,8 +3,9 @@
 // data (e.g. the child's name on an event, the vaccine name on a dose) comes in
 // the same request through Supabase nested selects — no "one query per row".
 import { fetch as streamingFetch } from 'expo/fetch';
+import { mightBeStaleSession, verifyAccount } from './authGuard';
 import { supabase } from './supabase';
-import type { PriceUnit } from './places';
+import { tagsForNeed, type PriceUnit, type SpecialNeed } from './places';
 import type { TipSection } from './tips';
 export type { PriceUnit };
 
@@ -12,7 +13,7 @@ export const PRIVACY_VERSION = 'privacy-2026-11-draft';
 
 export type Gender = 'girl' | 'boy';
 export type NationalityGroup = 'kuwaiti' | 'gcc' | 'other';
-export type EventKind = 'activity' | 'training' | 'class' | 'appointment' | 'other';
+export type EventKind = 'activity' | 'training' | 'class' | 'appointment' | 'therapy' | 'other';
 export type DoseStatus = 'due' | 'done' | 'skipped';
 export type Repeat = 'none' | 'daily' | 'weekly' | 'monthly';
 
@@ -63,7 +64,12 @@ export type ChildVaccination = {
 export type ScheduleVersion = { title_ar: string; title_en: string; source_url: string | null; review_note_ar: string | null; review_note_en: string | null };
 
 function check<T>(res: { data: T | null; error: { message: string; code?: string } | null }): T {
-  if (res.error) throw Object.assign(new Error(res.error.message), { code: res.error.code });
+  if (res.error) {
+    // If the account was deleted elsewhere, this signs out (in the background)
+    // and the sign-in screen explains why.
+    if (mightBeStaleSession(res.error.code)) void verifyAccount();
+    throw Object.assign(new Error(res.error.message), { code: res.error.code });
+  }
   return res.data as T;
 }
 
@@ -105,6 +111,45 @@ export async function updateChild(id: string, c: Partial<Omit<Child, 'id'>>) {
 }
 export async function deleteChild(id: string) {
   check(await supabase.from('children').delete().eq('id', id));
+}
+
+// ---------------------------------------------------------------- special needs
+// Optional and private: only the child's own family can read it (RLS), it is
+// never sent to the AI, and it is in the data export. Deleting the child
+// deletes it.
+export const NEEDS = [
+  'autism', 'adhd', 'speech', 'hearing', 'visual', 'physical', 'learning',
+  'down_syndrome', 'developmental_delay', 'chronic', 'other',
+] as const;
+export type Need = (typeof NEEDS)[number];
+export type ChildSupport = { needs: Need[]; notes: string | null; has_pada_card: boolean | null };
+export type ChildSupportRow = ChildSupport & { child_id: string };
+export const EMPTY_SUPPORT: ChildSupport = { needs: [], notes: null, has_pada_card: null };
+
+export async function getChildSupport(childId: string) {
+  const row = check(
+    await supabase.from('child_support').select('needs, notes, has_pada_card').eq('child_id', childId).maybeSingle(),
+  ) as ChildSupport | null;
+  return row ?? EMPTY_SUPPORT;
+}
+/** Every child's support profile in the family (only children that have one). */
+export async function listChildSupport() {
+  return check(await supabase.from('child_support').select('child_id, needs, notes, has_pada_card')) as ChildSupportRow[];
+}
+/** Saves the profile, or removes it when everything is empty (one server call). */
+export async function saveChildSupport(childId: string, s: ChildSupport) {
+  check(
+    await supabase.rpc('save_child_support', {
+      p_child: childId,
+      p_needs: s.needs,
+      p_notes: s.notes ?? '',
+      p_has_pada_card: s.has_pada_card,
+    }),
+  );
+}
+/** PostgREST filter: content for every child, plus content for any of these needs. */
+function needsFilter(needs: Need[]) {
+  return needs.length ? `for_needs.eq.{},for_needs.ov.{${needs.join(',')}}` : 'for_needs.eq.{}';
 }
 
 // ---------------------------------------------------------------- events
@@ -306,8 +351,8 @@ export async function updateSupply(id: string, s: Partial<SupplyInput>) {
 export async function deleteSupply(id: string) {
   check(await supabase.from('supply_items').delete().eq('id', id));
 }
-/** Suggested items for a child's age (in months) and gender. Small public list. */
-export async function listSuggestions(ageMonths: number, gender: Gender) {
+/** Suggested items for a child's age (in months), gender and needs. Small public list. */
+export async function listSuggestions(ageMonths: number, gender: Gender, needs: Need[] = []) {
   return check(
     await supabase
       .from('supply_suggestions')
@@ -315,6 +360,7 @@ export async function listSuggestions(ageMonths: number, gender: Gender) {
       .lte('min_age_months', ageMonths)
       .gte('max_age_months', ageMonths)
       .or(`only_gender.is.null,only_gender.eq.${gender}`)
+      .or(needsFilter(needs))
       .order('sort_order'),
   ) as SupplySuggestion[];
 }
@@ -378,8 +424,8 @@ export async function setGuideStepDone(familyId: string, childId: string, stepId
   else check(await supabase.from('guide_progress').delete().eq('child_id', childId).eq('step_id', stepId));
 }
 
-export type PlaceCategory = 'medical_centre' | 'activity' | 'nursery' | 'school' | 'hospital' | 'paediatrician' | 'toy_store' | 'clothing_store';
-export const PLACE_CATEGORIES: PlaceCategory[] = ['hospital', 'medical_centre', 'paediatrician', 'nursery', 'school', 'activity', 'toy_store', 'clothing_store'];
+export type PlaceCategory = 'medical_centre' | 'activity' | 'nursery' | 'school' | 'hospital' | 'paediatrician' | 'therapy_centre' | 'support_service' | 'toy_store' | 'clothing_store';
+export const PLACE_CATEGORIES: PlaceCategory[] = ['hospital', 'medical_centre', 'paediatrician', 'therapy_centre', 'support_service', 'nursery', 'school', 'activity', 'toy_store', 'clothing_store'];
 export type Governorate = 'capital' | 'hawalli' | 'farwaniya' | 'mubarak_al_kabeer' | 'ahmadi' | 'jahra';
 export const GOVERNORATES: Governorate[] = ['capital', 'hawalli', 'farwaniya', 'mubarak_al_kabeer', 'ahmadi', 'jahra'];
 export type Place = {
@@ -407,15 +453,21 @@ export type Place = {
   price_note_ar: string | null;
   price_note_en: string | null;
   source_checked_on: string | null;
+  special_needs_services: SpecialNeed[];
+  special_needs_note_ar: string | null;
+  special_needs_note_en: string | null;
 };
 export const PLACES_PAGE = 20;
 
 /** One page of the directory. Uses the (category, governorate, name) index, or (category, name) for all governorates. */
-export async function listPlaces(opts: { category: PlaceCategory; governorate: Governorate | null; search: string; page: number }) {
+export async function listPlaces(opts: { category: PlaceCategory; governorate: Governorate | null; search: string; page: number; need?: SpecialNeed | 'any' | null }) {
   let q = supabase
     .from('places')
-    .select('id, category, name_ar, name_en, governorate, area_ar, area_en, description_ar, description_en, phone, whatsapp, instagram, website, maps_url, hours_ar, hours_en, verified_on, address, price_min_kwd, price_max_kwd, price_unit, price_note_ar, price_note_en, source_checked_on')
+    .select('id, category, name_ar, name_en, governorate, area_ar, area_en, description_ar, description_en, phone, whatsapp, instagram, website, maps_url, hours_ar, hours_en, verified_on, address, price_min_kwd, price_max_kwd, price_unit, price_note_ar, price_note_en, source_checked_on, special_needs_services, special_needs_note_ar, special_needs_note_en')
     .eq('category', opts.category);
+  // 'any' = places with any special-needs tag; a need = places tagged with it (or with "all disabilities").
+  if (opts.need === 'any') q = q.neq('special_needs_services', '{}');
+  else if (opts.need) q = q.overlaps('special_needs_services', tagsForNeed(opts.need));
   if (opts.governorate) q = q.eq('governorate', opts.governorate);
   const s = opts.search.trim().replace(/[%_,()*]/g, ' ').slice(0, 40);
   if (s) q = q.or(`name_ar.ilike.*${s}*,name_en.ilike.*${s}*`);
@@ -517,7 +569,7 @@ export type Tip = {
   body_en: string;
 };
 /** Reviewed tips for a child's age (in months) and gender. Small public list. */
-export async function listTips(ageMonths: number, gender: Gender) {
+export async function listTips(ageMonths: number, gender: Gender, needs: Need[] = []) {
   return check(
     await supabase
       .from('tips')
@@ -525,6 +577,7 @@ export async function listTips(ageMonths: number, gender: Gender) {
       .lte('min_age_months', ageMonths)
       .gte('max_age_months', ageMonths)
       .or(`only_gender.is.null,only_gender.eq.${gender}`)
+      .or(needsFilter(needs))
       .order('sort_order'),
   ) as Tip[];
 }

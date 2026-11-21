@@ -110,3 +110,8 @@ Grouped by who does it. The code is ready for each of these, and each doc listed
 18. Store screenshots with a made-up demo family (`docs/launch/store-listing.md`).
 19. Fill in Apple's "App Privacy" and Google's "Data safety" forms with the answers in that file.
 20. Run the phone test checklist on a real iPhone and Android phone with a preview build, and send me anything that's wrong.
+
+**Special needs (`11-special-needs.md`)**
+21. A paediatrician or specialist reads the 13 special needs tips and 11 supply suggestions, then publishes any changes from the admin panel.
+22. Your team checks the 3 disability guides with PADA (offices, documents, who qualifies) and sets "Last verified".
+23. The lawyer adds the special needs profile to the privacy notice as sensitive health data.

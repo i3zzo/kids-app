@@ -6,12 +6,13 @@ import { Pressable, View } from 'react-native';
 import { Button, ErrorText, Field, Muted, Row, Screen, Title, Txt } from '@/components/ui';
 import { acceptInvite, createFamily } from '@/lib/api';
 import { useI18n } from '@/lib/i18n';
+import { isSignedOutError } from '@/lib/authGuard';
 import { useSession } from '@/lib/session';
 import { colors, space } from '@/theme';
 
 export default function CreateFamily() {
   const { t } = useI18n();
-  const { refresh } = useSession();
+  const { refresh, signOut } = useSession();
   const [name, setName] = useState('');
   const [consent, setConsent] = useState(false);
   const [code, setCode] = useState('');
@@ -28,8 +29,8 @@ export default function CreateFamily() {
       await createFamily(name.trim());
       await refresh();
       router.replace('/first-child');
-    } catch {
-      setError(t.somethingWrong);
+    } catch (e) {
+      setError(isSignedOutError((e as { code?: string }).code) ? t.accountGone : t.somethingWrong);
     } finally {
       setBusy(null);
     }
@@ -95,6 +96,8 @@ export default function CreateFamily() {
         style={{ textAlign: 'center', letterSpacing: 4 }}
       />
       <Button title={t.joinFamily} variant="secondary" onPress={join} loading={busy === 'join'} disabled={busy !== null || code.length < 8} />
+      {/* A way out if this is the wrong number or the account has a problem. */}
+      <Button title={t.signOut} variant="link" onPress={() => signOut().catch(() => {})} testID="onboarding-sign-out" />
     </Screen>
   );
 }

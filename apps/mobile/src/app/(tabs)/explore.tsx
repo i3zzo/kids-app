@@ -8,6 +8,7 @@ import {
   GOVERNORATES,
   listChildren,
   listKidsEvents,
+  listChildSupport,
   listGuides,
   listTrendingPlaces,
   listOffers,
@@ -23,7 +24,7 @@ import {
 } from '@/lib/api';
 import { ageParts, toDay } from '@/lib/dates';
 import { guideFits } from '@/lib/guides';
-import { formatPrice, mapLink } from '@/lib/places';
+import { formatPrice, mapLink, NEED_FILTERS, type SpecialNeed } from '@/lib/places';
 import { formatDay, useI18n } from '@/lib/i18n';
 import { useLoad } from '@/lib/useLoad';
 import { colors, space } from '@/theme';
@@ -64,7 +65,7 @@ function ChildPicker({ children, value, onChange, allowAll }: { children: Child[
 
 function Guides({ children }: { children?: Child[] }) {
   const { t, locale } = useI18n();
-  const { data, error, reload } = useLoad(listGuides, []);
+  const { data, error, reload } = useLoad(() => Promise.all([listGuides(), listChildSupport()]), []);
   const [childId, setChildId] = useState('');
   useEffect(() => {
     if (children?.length && !children.some((c) => c.id === childId)) setChildId(children[0].id);
@@ -73,10 +74,14 @@ function Guides({ children }: { children?: Child[] }) {
   if (!data || !children) return <Skeleton lines={4} />;
   const child = children.find((c) => c.id === childId);
   const audienceLabel = { kuwaiti: t.forKuwaiti, resident: t.forResident, all: t.forAll };
+  const [guides, support] = data;
+  // For a child with special needs, the disability services guides come first.
+  const hasNeeds = support.some((s) => s.child_id === childId && s.needs.length > 0);
+  const ordered = hasNeeds ? [...guides].sort((a, b) => Number(b.topic === 'disability') - Number(a.topic === 'disability')) : guides;
   return (
     <>
       <ChildPicker children={children} value={childId} onChange={setChildId} />
-      {data
+      {ordered
         .filter((g) => guideFits(g.audience, child?.nationality_group))
         .map((g) => (
           <Card key={g.id} onPress={() => router.push({ pathname: '/guide/[id]', params: { id: g.id, child: childId } })} testID={`guide-${g.topic}`}>
@@ -93,6 +98,21 @@ function Directory() {
   const { t, locale } = useI18n();
   const [category, setCategory] = useState<PlaceCategory>('hospital');
   const [gov, setGov] = useState<Governorate | 'all'>('all');
+  // Special needs: off, any tag, or one need.
+  const [need, setNeed] = useState<SpecialNeed | 'any' | null>(null);
+  // If a child in the family has special needs, start with the special needs
+  // filter on (any need). Only once, so the parent can switch it off.
+  useEffect(() => {
+    let live = true;
+    listChildSupport()
+      .then((rows) => {
+        if (live && rows.some((r) => r.needs.length > 0)) setNeed((n) => n ?? 'any');
+      })
+      .catch(() => {});
+    return () => {
+      live = false;
+    };
+  }, []);
   const [search, setSearch] = useState('');
   const [query, setQuery] = useState('');
   const [pages, setPages] = useState<Place[][]>([]);
@@ -110,7 +130,7 @@ function Directory() {
     setLoading(true);
     setError(false);
     try {
-      const rows = await listPlaces({ category, governorate: gov === 'all' ? null : gov, search: query, page });
+      const rows = await listPlaces({ category, governorate: gov === 'all' ? null : gov, search: query, page, need });
       setPages((p) => (page === 0 ? [rows] : [...p, rows]));
       setHasMore(rows.length === PLACES_PAGE);
     } catch {
@@ -123,7 +143,7 @@ function Directory() {
     setPages([]);
     load(0);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [category, gov, query]);
+  }, [category, gov, query, need]);
 
   const places = pages.flat();
   return (
@@ -134,6 +154,18 @@ function Directory() {
         onChange={setGov}
         options={[{ value: 'all' as const, label: t.allGovernorates }, ...GOVERNORATES.map((g) => ({ value: g, label: t[`gov_${g}`] }))]}
       />
+      <Choice
+        value={need ? 'on' : 'off'}
+        onChange={(v) => setNeed(v === 'on' ? 'any' : null)}
+        options={[{ value: 'off' as const, label: t.allPlaces }, { value: 'on' as const, label: t.specialNeeds }]}
+      />
+      {need ? (
+        <Choice
+          value={need}
+          onChange={setNeed}
+          options={[{ value: 'any' as const, label: t.anyNeed }, ...NEED_FILTERS.map((n) => ({ value: n, label: t[`sn_${n}`] }))]}
+        />
+      ) : null}
       <Field label={t.search} placeholder={t.searchPlaces} value={search} onChangeText={setSearch} maxLength={40} testID="place-search" />
       {error ? <><ErrorText>{t.somethingWrong}</ErrorText><Button title={t.retry} variant="secondary" onPress={() => load(0)} /></> : null}
       {places.length === 0 && loading ? <Skeleton lines={3} /> : null}
@@ -151,6 +183,7 @@ function Directory() {
     const hours = locale === 'ar' ? p.hours_ar : p.hours_en;
     const price = formatPrice(p, locale);
     const priceNote = locale === 'ar' ? p.price_note_ar : p.price_note_en;
+    const snNote = locale === 'ar' ? p.special_needs_note_ar : p.special_needs_note_en;
     const actions = [
       p.phone ? { label: t.call, url: `tel:${p.phone}` } : null,
       p.whatsapp ? { label: t.whatsapp, url: `https://wa.me/${p.whatsapp.replace(/\D/g, '')}` } : null,
@@ -162,6 +195,14 @@ function Directory() {
         <Txt style={{ fontWeight: '700' }}>{locale === 'ar' ? p.name_ar : p.name_en}</Txt>
         <Muted>{[t[`gov_${p.governorate}`], area].filter(Boolean).join(' · ')}</Muted>
         {desc ? <Txt>{desc}</Txt> : null}
+        {p.special_needs_services?.length ? (
+          <View testID={`sn-${p.name_en}`} style={{ gap: 2 }}>
+            <Txt style={{ fontWeight: '600', color: colors.tealDark }}>
+              {t.specialNeedsSupport}: {p.special_needs_services.map((n) => t[`sn_${n}`]).join(locale === 'ar' ? '، ' : ', ')}
+            </Txt>
+            {snNote ? <Muted style={{ fontSize: 12 }}>{snNote}</Muted> : null}
+          </View>
+        ) : null}
         {p.address ? <Muted>{p.address}</Muted> : null}
         {hours ? <Muted>{hours}</Muted> : null}
         <Txt testID={`price-${p.name_en}`}>{price ?? t.priceNotPublished}</Txt>
