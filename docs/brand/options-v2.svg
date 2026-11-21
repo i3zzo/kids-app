@@ -1,0 +1,60 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1500 820" font-family="Tajawal, Cairo, 'Noto Sans Arabic', 'Segoe UI', Arial, sans-serif">
+  <rect width="1500" height="820" fill="#FFFFFF"/>
+  <!-- Option A: Hanoon - big heart hugging small heart -->
+  <g transform="translate(50,40)">
+    <rect width="440" height="740" rx="32" fill="#FFF4F1"/>
+    <g transform="translate(100,50)">
+      <rect width="240" height="240" rx="56" fill="#E8505B"/>
+      <path d="M120 200 C40 150 30 95 62 72 C88 54 112 66 120 86 C128 66 152 54 178 72 C210 95 200 150 120 200Z" fill="#FFF4F1"/>
+      <path d="M120 165 C88 145 84 120 98 110 C108 103 117 108 120 116 C123 108 132 103 142 110 C156 120 152 145 120 165Z" fill="#E8505B"/>
+    </g>
+    <text x="220" y="370" font-size="64" font-weight="700" fill="#B3262F" text-anchor="middle">حنون</text>
+    <text x="220" y="440" font-size="52" font-weight="700" fill="#2B2B2B" text-anchor="middle">Hanoon</text>
+    <text x="220" y="485" font-size="22" fill="#2B2B2B" text-anchor="middle">"Tender, caring"</text>
+    <g font-size="16" fill="#2B2B2B">
+      <rect x="60" y="540" width="90" height="90" rx="16" fill="#E8505B"/><text x="60" y="655">#E8505B</text>
+      <rect x="175" y="540" width="90" height="90" rx="16" fill="#FFF4F1" stroke="#EAD6D0"/><text x="175" y="655">#FFF4F1</text>
+      <rect x="290" y="540" width="90" height="90" rx="16" fill="#7BC6B4"/><text x="290" y="655">#7BC6B4</text>
+    </g>
+    <text x="220" y="705" font-size="22" fill="#2B2B2B" text-anchor="middle" font-weight="700">A</text>
+  </g>
+  <!-- Option B: Shatoor - smiling star -->
+  <g transform="translate(530,40)">
+    <rect width="440" height="740" rx="32" fill="#F2F5FF"/>
+    <g transform="translate(100,50)">
+      <rect width="240" height="240" rx="56" fill="#23307A"/>
+      <path d="M120 38 L145 95 L206 100 L160 140 L174 200 L120 168 L66 200 L80 140 L34 100 L95 95Z" fill="#FFC845" stroke="#FFC845" stroke-width="10" stroke-linejoin="round"/>
+      <circle cx="104" cy="124" r="8" fill="#23307A"/><circle cx="136" cy="124" r="8" fill="#23307A"/>
+      <path d="M104 146 q16 14 32 0" fill="none" stroke="#23307A" stroke-width="7" stroke-linecap="round"/>
+    </g>
+    <text x="220" y="370" font-size="64" font-weight="700" fill="#23307A" text-anchor="middle">شطّور</text>
+    <text x="220" y="440" font-size="52" font-weight="700" fill="#2B2B2B" text-anchor="middle">Shattour</text>
+    <text x="220" y="485" font-size="22" fill="#2B2B2B" text-anchor="middle">"Clever little one"</text>
+    <g font-size="16" fill="#2B2B2B">
+      <rect x="60" y="540" width="90" height="90" rx="16" fill="#23307A"/><text x="60" y="655">#23307A</text>
+      <rect x="175" y="540" width="90" height="90" rx="16" fill="#FFC845"/><text x="175" y="655">#FFC845</text>
+      <rect x="290" y="540" width="90" height="90" rx="16" fill="#4FB3E8"/><text x="290" y="655">#4FB3E8</text>
+    </g>
+    <text x="220" y="705" font-size="22" fill="#2B2B2B" text-anchor="middle" font-weight="700">B</text>
+  </g>
+  <!-- Option C: Dalloo3 - sleepy crescent moon with cloud -->
+  <g transform="translate(1010,40)">
+    <rect width="440" height="740" rx="32" fill="#F6F2FF"/>
+    <g transform="translate(100,50)">
+      <rect width="240" height="240" rx="56" fill="#7A5CC8"/>
+      <path d="M150 40 A80 80 0 1 0 200 170 A64 64 0 1 1 150 40Z" fill="#FFE8A3"/>
+      <path d="M92 118 q10 8 20 0" fill="none" stroke="#7A5CC8" stroke-width="6" stroke-linecap="round"/>
+      <circle cx="96" cy="138" r="7" fill="#FF9DB5" opacity=".8"/>
+      <path d="M58 200 a22 22 0 0 1 34-26 a28 28 0 0 1 52 4 a20 20 0 0 1 22 22Z" fill="#FFFFFF"/>
+    </g>
+    <text x="220" y="370" font-size="64" font-weight="700" fill="#5B3FA8" text-anchor="middle">دلّوع</text>
+    <text x="220" y="440" font-size="52" font-weight="700" fill="#2B2B2B" text-anchor="middle">Dallou</text>
+    <text x="220" y="485" font-size="22" fill="#2B2B2B" text-anchor="middle">"Pampered darling"</text>
+    <g font-size="16" fill="#2B2B2B">
+      <rect x="60" y="540" width="90" height="90" rx="16" fill="#7A5CC8"/><text x="60" y="655">#7A5CC8</text>
+      <rect x="175" y="540" width="90" height="90" rx="16" fill="#FFE8A3"/><text x="175" y="655">#FFE8A3</text>
+      <rect x="290" y="540" width="90" height="90" rx="16" fill="#8FD9C2"/><text x="290" y="655">#8FD9C2</text>
+    </g>
+    <text x="220" y="705" font-size="22" fill="#2B2B2B" text-anchor="middle" font-weight="700">C</text>
+  </g>
+</svg>
