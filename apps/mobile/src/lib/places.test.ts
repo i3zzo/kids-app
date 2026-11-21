@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { formatPrice, mapLink } from './places.ts';
+import { formatPrice, mapLink, NEED_FILTERS, tagsForNeed } from './places.ts';
 
 test('no published price shows nothing', () => {
   assert.equal(formatPrice({ price_min_kwd: null, price_max_kwd: null, price_unit: null }, 'en'), null);
@@ -26,4 +26,15 @@ test('map link falls back to a search for the name and area', () => {
     mapLink({ maps_url: null, name_en: 'KidZania Kuwait', area_en: 'Al-Rai' }),
     'https://www.google.com/maps/search/?api=1&query=KidZania%20Kuwait%2C%20Al-Rai%2C%20Kuwait',
   );
+});
+
+test('picking one need also finds places for all disabilities', () => {
+  assert.deepEqual(tagsForNeed('autism'), ['autism', 'all_needs']);
+  assert.deepEqual(tagsForNeed('wheelchair_access'), ['wheelchair_access']);
+});
+
+test("the catch-all tags aren't offered as filters", () => {
+  assert.ok(!NEED_FILTERS.includes('all_needs'));
+  assert.ok(!NEED_FILTERS.includes('general'));
+  assert.ok(NEED_FILTERS.includes('down_syndrome'));
 });

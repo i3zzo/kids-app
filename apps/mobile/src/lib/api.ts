@@ -4,7 +4,7 @@
 // the same request through Supabase nested selects — no "one query per row".
 import { fetch as streamingFetch } from 'expo/fetch';
 import { supabase } from './supabase';
-import type { PriceUnit } from './places';
+import { tagsForNeed, type PriceUnit, type SpecialNeed } from './places';
 import type { TipSection } from './tips';
 export type { PriceUnit };
 
@@ -378,8 +378,8 @@ export async function setGuideStepDone(familyId: string, childId: string, stepId
   else check(await supabase.from('guide_progress').delete().eq('child_id', childId).eq('step_id', stepId));
 }
 
-export type PlaceCategory = 'medical_centre' | 'activity' | 'nursery' | 'school' | 'hospital' | 'paediatrician' | 'toy_store' | 'clothing_store';
-export const PLACE_CATEGORIES: PlaceCategory[] = ['hospital', 'medical_centre', 'paediatrician', 'nursery', 'school', 'activity', 'toy_store', 'clothing_store'];
+export type PlaceCategory = 'medical_centre' | 'activity' | 'nursery' | 'school' | 'hospital' | 'paediatrician' | 'therapy_centre' | 'support_service' | 'toy_store' | 'clothing_store';
+export const PLACE_CATEGORIES: PlaceCategory[] = ['hospital', 'medical_centre', 'paediatrician', 'therapy_centre', 'support_service', 'nursery', 'school', 'activity', 'toy_store', 'clothing_store'];
 export type Governorate = 'capital' | 'hawalli' | 'farwaniya' | 'mubarak_al_kabeer' | 'ahmadi' | 'jahra';
 export const GOVERNORATES: Governorate[] = ['capital', 'hawalli', 'farwaniya', 'mubarak_al_kabeer', 'ahmadi', 'jahra'];
 export type Place = {
@@ -407,15 +407,21 @@ export type Place = {
   price_note_ar: string | null;
   price_note_en: string | null;
   source_checked_on: string | null;
+  special_needs_services: SpecialNeed[];
+  special_needs_note_ar: string | null;
+  special_needs_note_en: string | null;
 };
 export const PLACES_PAGE = 20;
 
 /** One page of the directory. Uses the (category, governorate, name) index, or (category, name) for all governorates. */
-export async function listPlaces(opts: { category: PlaceCategory; governorate: Governorate | null; search: string; page: number }) {
+export async function listPlaces(opts: { category: PlaceCategory; governorate: Governorate | null; search: string; page: number; need?: SpecialNeed | 'any' | null }) {
   let q = supabase
     .from('places')
-    .select('id, category, name_ar, name_en, governorate, area_ar, area_en, description_ar, description_en, phone, whatsapp, instagram, website, maps_url, hours_ar, hours_en, verified_on, address, price_min_kwd, price_max_kwd, price_unit, price_note_ar, price_note_en, source_checked_on')
+    .select('id, category, name_ar, name_en, governorate, area_ar, area_en, description_ar, description_en, phone, whatsapp, instagram, website, maps_url, hours_ar, hours_en, verified_on, address, price_min_kwd, price_max_kwd, price_unit, price_note_ar, price_note_en, source_checked_on, special_needs_services, special_needs_note_ar, special_needs_note_en')
     .eq('category', opts.category);
+  // 'any' = places with any special-needs tag; a need = places tagged with it (or with "all disabilities").
+  if (opts.need === 'any') q = q.neq('special_needs_services', '{}');
+  else if (opts.need) q = q.overlaps('special_needs_services', tagsForNeed(opts.need));
   if (opts.governorate) q = q.eq('governorate', opts.governorate);
   const s = opts.search.trim().replace(/[%_,()*]/g, ' ').slice(0, 40);
   if (s) q = q.or(`name_ar.ilike.*${s}*,name_en.ilike.*${s}*`);
