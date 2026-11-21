@@ -464,17 +464,10 @@ export async function listTips(ageMonths: number, gender: Gender) {
   ) as Tip[];
 }
 
-export type AgedTip = Tip & { min_age_months: number; max_age_months: number; only_gender: Gender | null };
-/** Tips for several children in one request: every tip overlapping the youngest..oldest age. */
-export async function listTipsForAges(minAge: number, maxAge: number) {
-  return check(
-    await supabase
-      .from('tips')
-      .select('id, section, title_ar, title_en, body_ar, body_en, min_age_months, max_age_months, only_gender')
-      .lte('min_age_months', maxAge)
-      .gte('max_age_months', minAge)
-      .order('sort_order'),
-  ) as AgedTip[];
+export type ChildTip = Tip & { child_id: string };
+/** Tips that fit each of the family's children, in one request (Home's tip of the day). */
+export async function listMyChildrenTips() {
+  return check(await supabase.rpc('my_children_tips')) as ChildTip[];
 }
 
 export type AiError = 'daily_limit' | 'not_configured' | 'failed';
