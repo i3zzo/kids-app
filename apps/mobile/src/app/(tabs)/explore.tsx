@@ -7,12 +7,16 @@ import { Button, Card, Choice, ErrorText, Field, Muted, Row, Screen, Skeleton, T
 import {
   GOVERNORATES,
   listChildren,
+  listKidsEvents,
   listGuides,
+  listTrendingPlaces,
   listOffers,
   listPlaces,
   PLACE_CATEGORIES,
   PLACES_PAGE,
+  EVENTS_PAGE,
   type Child,
+  type KidsEvent,
   type Governorate,
   type Place,
   type PlaceCategory,
@@ -24,7 +28,7 @@ import { formatDay, useI18n } from '@/lib/i18n';
 import { useLoad } from '@/lib/useLoad';
 import { colors, space } from '@/theme';
 
-type Section = 'guides' | 'directory' | 'offers';
+type Section = 'guides' | 'events' | 'directory' | 'offers';
 
 export default function Explore() {
   const { t } = useI18n();
@@ -37,11 +41,12 @@ export default function Explore() {
         onChange={setSection}
         options={[
           { value: 'guides', label: t.guides },
+          { value: 'events', label: t.events },
           { value: 'directory', label: t.directory },
           { value: 'offers', label: t.offers },
         ]}
       />
-      {section === 'guides' ? <Guides children={children} /> : section === 'directory' ? <Directory /> : <Offers children={children} />}
+      {section === 'guides' ? <Guides children={children} /> : section === 'events' ? <Events /> : section === 'directory' ? <Directory /> : <Offers children={children} />}
     </Screen>
   );
 }
@@ -175,6 +180,73 @@ function Directory() {
       </Card>
     );
   }
+}
+
+function Events() {
+  const { t, locale } = useI18n();
+  const today = toDay(new Date());
+  const { data: trending } = useLoad(() => listTrendingPlaces(today), [today]);
+  const [pages, setPages] = useState<KidsEvent[][]>([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(false);
+  async function load(page: number) {
+    setLoading(true);
+    setError(false);
+    try {
+      const rows = await listKidsEvents(today, page);
+      setPages((p) => (page === 0 ? [rows] : [...p, rows]));
+    } catch {
+      setError(true);
+    } finally {
+      setLoading(false);
+    }
+  }
+  useEffect(() => {
+    load(0);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [today]);
+  const events = pages.flat();
+  const hasMore = pages.length > 0 && pages[pages.length - 1].length === EVENTS_PAGE;
+  const range = (e: KidsEvent) => (e.starts_on === e.ends_on ? formatDay(e.starts_on, locale) : `${formatDay(e.starts_on, locale)} – ${formatDay(e.ends_on, locale)}`);
+  return (
+    <>
+      {trending?.length ? (
+        <>
+          <Txt style={{ fontWeight: '700' }}>{t.trendingPlaces}</Txt>
+          {trending.map((p) => (
+            <Card key={p.id} testID={`trending-${p.name_en}`}>
+              <Txt style={{ fontWeight: '700' }}>{locale === 'ar' ? p.name_ar : p.name_en}</Txt>
+              <Muted>{[t[`place_${p.category}`], t[`gov_${p.governorate}`], locale === 'ar' ? p.area_ar : p.area_en].filter(Boolean).join(' · ')}</Muted>
+              {(locale === 'ar' ? p.trending_note_ar : p.trending_note_en) ? <Txt>{locale === 'ar' ? p.trending_note_ar : p.trending_note_en}</Txt> : null}
+            </Card>
+          ))}
+        </>
+      ) : null}
+      <Txt style={{ fontWeight: '700' }}>{t.upcomingEvents}</Txt>
+      {error ? <><ErrorText>{t.somethingWrong}</ErrorText><Button title={t.retry} variant="secondary" onPress={() => load(0)} /></> : null}
+      {events.length === 0 && loading ? <Skeleton lines={3} /> : null}
+      {events.length === 0 && !loading && !error ? <Muted>{t.noEvents}</Muted> : null}
+      {events.map((e) => {
+        const price = formatPrice({ price_min_kwd: e.price_min_kwd, price_max_kwd: e.price_max_kwd, price_unit: null }, locale);
+        const note = locale === 'ar' ? e.price_note_ar : e.price_note_en;
+        const where = [locale === 'ar' ? e.venue_ar : e.venue_en, e.governorate ? t[`gov_${e.governorate}`] : null].filter(Boolean).join(' · ');
+        return (
+          <Card key={e.id} testID={`event-${e.title_en}`} onPress={e.url ? () => Linking.openURL(e.url!) : undefined}>
+            <Txt style={{ fontWeight: '700' }}>{locale === 'ar' ? e.title_ar : e.title_en}</Txt>
+            <Muted>{range(e)}</Muted>
+            {where ? <Muted>{where}</Muted> : null}
+            {(locale === 'ar' ? e.description_ar : e.description_en) ? <Txt>{locale === 'ar' ? e.description_ar : e.description_en}</Txt> : null}
+            {(locale === 'ar' ? e.hours_ar : e.hours_en) ? <Muted>{locale === 'ar' ? e.hours_ar : e.hours_en}</Muted> : null}
+            <Txt>{price ?? t.priceNotPublished}</Txt>
+            {note ? <Muted style={{ fontSize: 12 }}>{note}</Muted> : null}
+            <Muted style={{ fontSize: 12 }}>{t.sourceChecked}: {formatDay(e.source_checked_on, locale)}</Muted>
+            {!e.verified_on ? <Muted style={{ fontSize: 12, color: colors.warning }}>{t.eventNotConfirmed}</Muted> : null}
+          </Card>
+        );
+      })}
+      {hasMore ? <Button title={t.loadMore} variant="secondary" loading={loading && events.length > 0} onPress={() => load(pages.length)} /> : null}
+    </>
+  );
 }
 
 function Offers({ children }: { children?: Child[] }) {

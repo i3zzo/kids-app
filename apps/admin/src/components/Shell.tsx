@@ -18,6 +18,7 @@ export function useStaff() {
 const MENU: { href: string; label: string; roles?: StaffRole[] }[] = [
   { href: '/', label: 'Overview' },
   { href: '/places/', label: 'Directory' },
+  { href: '/events/', label: 'Kids\' events' },
   { href: '/offers/', label: 'Offers' },
   { href: '/guides/', label: 'Government guides' },
   { href: '/brands/', label: 'Brands' },

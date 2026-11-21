@@ -34,3 +34,11 @@ alter table public.places
 -- orders by name: the (category, governorate, name_en, id) index can't give
 -- that order without a sort, so this one serves it.
 create index places_category_name_idx on public.places (category, name_en, id) where status = 'published';
+
+-- "New and trending": a place is featured until this date, with the reason
+-- (for example "opened in October 2026", from a dated news source).
+alter table public.places
+  add column trending_until    date,
+  add column trending_note_ar  text check (char_length(trending_note_ar) <= 200),
+  add column trending_note_en  text check (char_length(trending_note_en) <= 200);
+create index places_trending_idx on public.places (trending_until, id) where status = 'published' and trending_until is not null;
