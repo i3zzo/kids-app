@@ -15,7 +15,7 @@ kids-app/
 │       ├── src/app/            Screens. Every file here is one screen.
 │       │   ├── (auth)/         Language → phone number → SMS code
 │       │   ├── (onboarding)/   Create or join a family → add the first child
-│       │   ├── (tabs)/         The bottom tabs: Home, Calendar, Family
+│       │   ├── (tabs)/         The bottom tabs: Home, Calendar, Supplies, Explore, Family
 │       │   ├── child/          Add / edit a child
 │       │   ├── event/          Add / edit a calendar event
 │       │   ├── vaccines/       A child's full vaccination schedule
@@ -25,6 +25,10 @@ kids-app/
 │       │                       Arabic/English text (i18n/strings.ts), helpers
 │       ├── assets/             App icon and logo
 │       └── .env.example        The two PUBLIC settings the app needs
+│   └── admin/                  The team's admin panel (Next.js, static site)
+│       ├── src/app/            One folder per page (directory, offers, guides…)
+│       ├── src/components/     Sign-in, the content editor with review workflow
+│       └── .env.example        The same two PUBLIC settings
 ├── supabase/                   The server side
 │   ├── migrations/             Database tables + all security rules (SQL)
 │   ├── tests/                  Security tests: one family can't see another
@@ -74,6 +78,17 @@ npx supabase test db                      # security tests (from the repo root)
 cd apps/mobile && npm run typecheck && npm test
 ```
 
+## Run the admin panel
+
+```bash
+cd apps/admin
+cp .env.example .env.local     # the same URL and anon key as the app
+npm install
+npm run dev                    # http://localhost:3001
+```
+
+The first super admin is added once with SQL (see `docs/explain/06-admin.md`). After that, the super admin adds the team from the Staff page.
+
 ## Where each build step is explained
 
 - [Step 1: sign-in, family, children, calendar and vaccinations](docs/explain/01-family-children-calendar.md)
@@ -81,3 +96,4 @@ cd apps/mobile && npm run typecheck && npm test
 - [Step 3: reminders, repeating events and notification settings](docs/explain/03-reminders.md)
 - [Step 4: supplies tracker and suggested items by age](docs/explain/04-supplies.md)
 - [Step 5: Explore — government guides, directory and offers](docs/explain/05-explore.md)
+- [Step 6: admin panel, roles and review before publishing](docs/explain/06-admin.md)
