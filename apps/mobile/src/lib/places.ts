@@ -25,3 +25,17 @@ export function mapLink(p: { maps_url: string | null; name_en: string; area_en: 
   const q = [p.name_en, p.area_en, 'Kuwait'].filter(Boolean).join(', ');
   return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(q)}`;
 }
+
+/** Needs and access tags a directory listing can carry (matches places.special_needs_services). */
+export const SPECIAL_NEEDS_SERVICES = [
+  'autism', 'adhd', 'speech', 'occupational', 'physio', 'hearing', 'visual', 'learning', 'intellectual',
+  'down_syndrome', 'physical', 'developmental_delay', 'early_intervention', 'all_needs', 'general',
+  'wheelchair_access', 'sensory_friendly',
+] as const;
+export type SpecialNeed = (typeof SPECIAL_NEEDS_SERVICES)[number];
+/** Tags a parent picks from: "all_needs" and "general" match any specific need, so they aren't offered on their own. */
+export const NEED_FILTERS: SpecialNeed[] = SPECIAL_NEEDS_SERVICES.filter((n) => n !== 'all_needs' && n !== 'general');
+/** Tags that a place serving this need may carry: the need itself, or "all disabilities". */
+export function tagsForNeed(need: SpecialNeed): SpecialNeed[] {
+  return need === 'wheelchair_access' || need === 'sensory_friendly' ? [need] : [need, 'all_needs'];
+}

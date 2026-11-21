@@ -1,8 +1,8 @@
-# The Explore directory now has 279 real places in Kuwait, plus events
+# The Explore directory now has 361 real places in Kuwait, special-needs support and events
 
 ## What changed for parents
 
-Explore → Directory used to list 6 government hospitals. It now lists **279 places** across eight sections (a new **Medical centres** section was added) and all six governorates. Explore also has a new **Events** tab. Each card shows:
+Explore → Directory used to list 6 government hospitals. It now lists **361 places** across ten sections (new **Medical centres**, **Therapy & rehab** and **Support services** sections were added) and all six governorates. Explore also has a new **Events** tab. Each card shows:
 
 - the name, governorate and area, plus the street address when a source gives one;
 - the **price** when a public source shows it (for example "KD 2,400 a year" or "KD 14 entry"), or "Price not published";
@@ -36,6 +36,8 @@ Rules I followed:
 
 ## How complete it is
 
+This table covers the first 279 places. The 82 special-needs places are counted in their own table under "Special needs".
+
 | | Capital | Hawalli | Farwaniya | Mubarak Al-Kabeer | Ahmadi | Jahra | Total | With a price | With a phone |
 |---|---|---|---|---|---|---|---|---|---|
 | Hospitals | 14 | 6 | 2 | – | 5 | 2 | 29 | 0 | 22 |
@@ -60,6 +62,43 @@ This is a strong start, not a complete directory. The biggest gaps:
 - Arabic names are my transliterations of the English names. Please check them.
 - Government schools and Ministry of Health clinics aren't included yet.
 
+## Special needs
+
+Every section of the directory now has a **Special needs** switch. Turn it on to see only places that serve children with special needs. Then pick a need, such as Autism, Down syndrome, Hearing or Wheelchair access, to narrow the list. Places that say they serve "all disabilities" show up for every need. Each card says which needs the place serves.
+
+There are two new sections: **Therapy & rehab** (speech, OT, physio, ABA and rehabilitation centres) and **Support services** (the four offices of the Public Authority for Disability Affairs, PADA).
+
+Where the data came from:
+- **The official PADA list on Kuwait Government Online.** It covers 31 nurseries, 39 schools and 13 centres for children with disabilities, with addresses, phone numbers and the disabilities each one serves. Two adult-only centres were left out. The page has no "last updated" date.
+- **The PADA branches page** for the four offices.
+- **The centres' own websites** for COMMUNICATE, BrainBox, ARGAN Riaya, Active Care and the KOC Child Development Unit (Ahmadi Hospital).
+- **A Kuwait Times article (October 2025)**. It describes The Avenues and 360 Mall as built for accessibility, so the 14 places we list inside them are tagged "wheelchair access".
+- **An undated special-needs guide on hilitehomes.com**, used for three entries only: the Applied Behavior Center, Kharafi Activity Kids Center (free for children with disabilities) and the therapy centre at Al-Sabah Hospital. The cards say the source is undated.
+
+When the PADA list says a school has "inclusive or special-needs classes" but not which needs, the card says "Special needs (ask which)". It doesn't appear when a parent filters for one specific need, because we don't know which needs the school serves.
+
+| Special-needs places | Capital | Hawalli | Farwaniya | Mubarak Al-Kabeer | Ahmadi | Jahra | Total |
+|---|---|---|---|---|---|---|---|
+| Nurseries | 2 | 6 | 6 | 7 | 6 | 4 | 31 |
+| Schools | 4 | 9 | 7 | 1 | 7 | 6 | 34 |
+| Therapy & rehab | 4 | 5 | 2 | 2 | 2 | 1 | 16 |
+| Support services (PADA) | 0 | 1 | 1 | 0 | 1 | 1 | 4 |
+| Hospitals | 1 | 0 | 0 | 0 | 1 | 0 | 2 |
+| Activities | 0 | 2 | 4 | 0 | 0 | 0 | 6 |
+| Toy stores | 0 | 0 | 3 | 0 | 0 | 0 | 3 |
+| Kids' clothing | 0 | 1 | 2 | 0 | 0 | 0 | 3 |
+| **Total** | 11 | 24 | 25 | 10 | 17 | 12 | **99** |
+
+That is 82 new places plus 17 places that were already listed and now carry a tag. The directory now has 361 places.
+
+What's missing:
+- **Prices.** None of the special-needs providers publishes fees. One therapy site shows KD 20 a session but gives no address, so it isn't listed. One school's fee table is from 2021–22, so we left it out.
+- **Adaptive toys and clothing shops.** We found no shop in Kuwait with a public listing for these. The toy and clothing entries above are mainstream stores inside the accessible malls.
+- **Paediatricians and medical centres** with developmental services. Only the KOC Child Development Unit and the Al-Sabah Hospital therapy centre have a source that says so.
+- **Inclusive activities.** Kuwait Riding Center's Little Wings programme and Swing Kuwait (golf) are named in the undated guide, but it gives no location, so they aren't listed yet.
+
+The team should call the PADA-listed nurseries and schools first. The government list has no date, and nurseries open and close often.
+
 ## Events and "New and trending"
 
 Explore → Events shows two lists:
@@ -80,6 +119,9 @@ Admin: a new **Kids' events** page, and three new Directory fields ("Show as New
 If you would rather parents only see places the team has confirmed, one line of SQL can set all unconfirmed places to "In review", which hides them until they are checked.
 
 ## Speed
+
+Special-needs filter, at 20,000 listings with 1 in 10 tagged, as a visitor. "Any need" in a section takes 0.05–0.06 ms. One governorate takes 0.10–0.22 ms. "Autism" takes 0.30–0.65 ms. A need that no place has yet takes 4–7 ms, because it reads the whole section. A separate index on the tags made no difference in these runs, so we didn't add one (`supabase/perf/directory.sql`).
+
 
 Measured on the local database with 20,000 published places (about 100× today), as a visitor so RLS is included, 3 runs each (`supabase/perf/directory.sql`):
 
