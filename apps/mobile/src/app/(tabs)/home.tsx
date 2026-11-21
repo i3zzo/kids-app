@@ -5,7 +5,7 @@ import { View } from 'react-native';
 import { EventRow } from '@/components/EventRow';
 import { RemindersCard } from '@/components/RemindersCard';
 import { Button, Card, Dot, ErrorText, Muted, Row, Screen, Skeleton, Title, Txt } from '@/components/ui';
-import { listChildren, listEvents, listOpenVaccinations, type ChildVaccination } from '@/lib/api';
+import { listChildren, listEvents, listLowSupplies, listOpenVaccinations, type ChildVaccination } from '@/lib/api';
 import { addDays, toDay } from '@/lib/dates';
 import { expandEvents } from '@/lib/recurrence';
 import { formatDay, useI18n } from '@/lib/i18n';
@@ -20,13 +20,14 @@ export default function Home() {
   const { data, error, reload } = useLoad(async () => {
     const now = new Date();
     const start = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-    // Three independent requests, sent at the same time.
-    const [children, events, doses] = await Promise.all([
+    // Four independent requests, sent at the same time.
+    const [children, events, doses, low] = await Promise.all([
       listChildren(),
       listEvents(familyId, start, addDays(start, 8)),
       listOpenVaccinations(familyId, toDay(addDays(start, 90))),
+      listLowSupplies(familyId),
     ]);
-    return { children, events: expandEvents(events, start, addDays(start, 8)), doses, today: toDay(start) };
+    return { children, events: expandEvents(events, start, addDays(start, 8)), doses, low, today: toDay(start) };
   }, [familyId]);
 
   if (error) return <Screen><ErrorText>{t.somethingWrong}</ErrorText><Button title={t.retry} onPress={reload} /></Screen>;
@@ -75,6 +76,26 @@ export default function Home() {
           );
         })}
       </Section>
+
+      {data.low.length > 0 ? (
+        <Section title={t.lowSupplies}>
+          {data.low.map((i) => {
+            const c = byId.get(i.child_id);
+            return (
+              <Card key={i.id} onPress={() => router.push('/supplies')}>
+                <Row>
+                  <Dot color={c?.color ?? colors.muted} />
+                  <Txt style={{ fontWeight: '700', flex: 1 }}>{i.name}</Txt>
+                  <Txt style={{ color: i.quantity === 0 ? colors.danger : colors.warning, fontWeight: '700' }}>
+                    {i.quantity === 0 ? t.finished : `${i.quantity} ${t[`unit_${i.unit}`]}`}
+                  </Txt>
+                </Row>
+                {c ? <Muted>{c.first_name}</Muted> : null}
+              </Card>
+            );
+          })}
+        </Section>
+      ) : null}
 
       {week.length > 0 ? (
         <Section title={t.upcomingWeek}>

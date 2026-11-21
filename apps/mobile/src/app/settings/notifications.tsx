@@ -61,6 +61,10 @@ export default function NotificationSettingsScreen() {
         <Txt style={{ fontWeight: '600', flex: 1 }}>{t.notifyEvents}</Txt>
         <Switch value={s.events} onValueChange={(v) => set({ events: v })} trackColor={{ true: colors.teal }} accessibilityLabel={t.notifyEvents} />
       </Row>
+      <Row style={{ justifyContent: 'space-between' }}>
+        <Txt style={{ fontWeight: '600', flex: 1 }}>{t.notifySupplies}</Txt>
+        <Switch value={s.supplies} onValueChange={(v) => set({ supplies: v })} trackColor={{ true: colors.teal }} accessibilityLabel={t.notifySupplies} />
+      </Row>
       <Txt style={{ fontWeight: '600' }}>{t.quietHours}</Txt>
       <DateField label={t.quietFrom} mode="time" value={toDate(s.quiet_start)} onChange={(d) => set({ quiet_start: toHHMM(d) })} />
       <DateField label={t.quietTo} mode="time" value={toDate(s.quiet_end)} onChange={(d) => set({ quiet_end: toHHMM(d) })} />

@@ -212,6 +212,7 @@ export async function getCurrentSchedule() {
 export type NotificationSettings = {
   vaccines: boolean;
   events: boolean;
+  supplies: boolean;
   vaccine_days_before: number;
   quiet_start: string; // "22:00:00"
   quiet_end: string;
@@ -219,6 +220,7 @@ export type NotificationSettings = {
 export const DEFAULT_NOTIFICATION_SETTINGS: NotificationSettings = {
   vaccines: true,
   events: true,
+  supplies: true,
   vaccine_days_before: 3,
   quiet_start: '22:00:00',
   quiet_end: '07:00:00',
@@ -226,7 +228,7 @@ export const DEFAULT_NOTIFICATION_SETTINGS: NotificationSettings = {
 
 export async function getNotificationSettings() {
   const row = check(
-    await supabase.from('notification_settings').select('vaccines, events, vaccine_days_before, quiet_start, quiet_end').maybeSingle(),
+    await supabase.from('notification_settings').select('vaccines, events, supplies, vaccine_days_before, quiet_start, quiet_end').maybeSingle(),
   ) as NotificationSettings | null;
   return row ?? DEFAULT_NOTIFICATION_SETTINGS;
 }
@@ -238,4 +240,86 @@ export async function registerDevice(token: string, platform: 'ios' | 'android',
 }
 export async function unregisterDevice(token: string) {
   check(await supabase.from('device_tokens').delete().eq('token', token));
+}
+
+// ---------------------------------------------------------------- supplies
+export type SupplyCategory = 'feeding' | 'diapering' | 'health' | 'teething' | 'play' | 'clothing';
+export type SupplyUnit = 'pcs' | 'packs' | 'boxes' | 'bottles' | 'tins';
+export const SUPPLY_CATEGORIES: SupplyCategory[] = ['feeding', 'diapering', 'health', 'teething', 'play', 'clothing'];
+export const SUPPLY_UNITS: SupplyUnit[] = ['pcs', 'packs', 'boxes', 'bottles', 'tins'];
+
+export type SupplyItem = {
+  id: string;
+  child_id: string;
+  category: SupplyCategory;
+  name: string;
+  brand: string | null;
+  size: string | null;
+  quantity: number;
+  unit: SupplyUnit;
+  low_threshold: number;
+  is_low: boolean;
+  suggestion_id: string | null;
+};
+export type SupplyInput = Omit<SupplyItem, 'id' | 'is_low' | 'child_id' | 'suggestion_id'>;
+
+export type BrandKind = 'diapers' | 'formula' | 'wipes' | 'baby_care';
+export type Brand = { id: string; kind: BrandKind; name_ar: string; name_en: string; needs_store_check: boolean };
+export type SupplySuggestion = {
+  id: string;
+  category: SupplyCategory;
+  name_ar: string;
+  name_en: string;
+  hint_ar: string | null;
+  hint_en: string | null;
+  brand_kind: BrandKind | null;
+  is_formula: boolean;
+  default_unit: SupplyUnit;
+  default_low: number;
+};
+
+const SUPPLY_COLS = 'id, child_id, category, name, brand, size, quantity, unit, low_threshold, is_low, suggestion_id';
+
+/** One child's supplies. Uses the (child_id, category, name) index. */
+export async function listSupplies(childId: string) {
+  return check(await supabase.from('supply_items').select(SUPPLY_COLS).eq('child_id', childId).order('category').order('name')) as SupplyItem[];
+}
+/** Items running low across the family, for Home. Uses the partial "is_low" index. */
+export async function listLowSupplies(familyId: string, limit = 20) {
+  return check(
+    await supabase.from('supply_items').select(SUPPLY_COLS).eq('family_id', familyId).eq('is_low', true).order('quantity').order('id').limit(limit),
+  ) as SupplyItem[];
+}
+export async function getSupply(id: string) {
+  return check(await supabase.from('supply_items').select(SUPPLY_COLS).eq('id', id).single()) as SupplyItem;
+}
+export async function addSupply(familyId: string, childId: string, s: SupplyInput, suggestionId: string | null = null) {
+  check(await supabase.from('supply_items').insert({ ...s, family_id: familyId, child_id: childId, suggestion_id: suggestionId }));
+}
+export async function updateSupply(id: string, s: Partial<SupplyInput>) {
+  check(await supabase.from('supply_items').update(s).eq('id', id));
+}
+export async function deleteSupply(id: string) {
+  check(await supabase.from('supply_items').delete().eq('id', id));
+}
+/** Suggested items for a child's age (in months) and gender. Small public list. */
+export async function listSuggestions(ageMonths: number, gender: Gender) {
+  return check(
+    await supabase
+      .from('supply_suggestions')
+      .select('id, category, name_ar, name_en, hint_ar, hint_en, brand_kind, is_formula, default_unit, default_low')
+      .lte('min_age_months', ageMonths)
+      .gte('max_age_months', ageMonths)
+      .or(`only_gender.is.null,only_gender.eq.${gender}`)
+      .order('sort_order'),
+  ) as SupplySuggestion[];
+}
+/** Brands sold in Kuwait, alphabetical (no ranking). */
+export async function listBrands() {
+  return check(await supabase.from('brands').select('id, kind, name_ar, name_en, needs_store_check').order('name_en')) as Brand[];
+}
+/** Add several suggested items in one request (not one request per item). */
+export async function addSuggestedSupplies(familyId: string, childId: string, list: (SupplyInput & { suggestion_id: string })[]) {
+  if (!list.length) return;
+  check(await supabase.from('supply_items').insert(list.map((s) => ({ ...s, family_id: familyId, child_id: childId }))));
 }

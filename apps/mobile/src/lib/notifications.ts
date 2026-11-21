@@ -71,6 +71,6 @@ export function useNotificationTaps() {
   const response = Notifications.useLastNotificationResponse();
   useEffect(() => {
     const url = response?.notification.request.content.data?.url;
-    if (typeof url === 'string' && /^\/(dose|event)\/[0-9a-f-]{36}$/.test(url)) router.push(url);
+    if (typeof url === 'string' && (/^\/(dose|event)\/[0-9a-f-]{36}$/.test(url) || url === '/supplies')) router.push(url);
   }, [response]);
 }

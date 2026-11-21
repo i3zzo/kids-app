@@ -11,6 +11,7 @@ export const colors = {
   line: '#E4E7EB',
   white: '#FFFFFF',
   danger: '#C2410C',
+  warning: '#B45309',
   success: '#15803D',
   pearl: '#FFC845',
 };
