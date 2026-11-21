@@ -54,4 +54,4 @@ All of the rules (who gets what, which language, quiet hours, never twice) run o
 2. **iPhone push key:** on your first `eas build -p ios`, let EAS create the Apple push key (it asks). You need your Apple Developer account for this.
 3. **Android:** on your first `eas build -p android`, upload the Firebase (FCM) key in the Expo dashboard. Expo's guide is "Push notifications setup → Android FCM credentials".
 4. **Optional, recommended:** create an Expo access token with "enhanced push security" turned on. Store it in the server's Vault under the name `expo_access_token`. It's never put in the code.
-5. **Testing on your phone:** Expo Go on Android can't receive remote pushes. Use a development build (`eas build --profile development`) to test reminders.
+5. **Testing on your phone:** Expo Go on Android can't receive remote pushes. Use a test build (`eas build --profile preview`) to test reminders.
