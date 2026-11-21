@@ -71,6 +71,7 @@ function Gate() {
         }}
       >
         <Stack.Screen name="index" options={{ headerShown: false }} />
+        <Stack.Screen name="privacy" options={{ title: t.privacyNotice }} />
         <Stack.Protected guard={!signedIn}>
           <Stack.Screen name="(auth)" options={{ headerShown: false }} />
         </Stack.Protected>
@@ -91,6 +92,7 @@ function Gate() {
           <Stack.Screen name="guide/[id]" options={{ title: t.guides }} />
           <Stack.Screen name="tips/[childId]" options={{ title: t.tips }} />
           <Stack.Screen name="settings/notifications" options={{ title: t.notifications }} />
+          <Stack.Screen name="settings/privacy" options={{ title: t.privacyAndData }} />
         </Stack.Protected>
       </Stack>
     </LocaleProvider>

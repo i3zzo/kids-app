@@ -8,4 +8,5 @@ export async function enablePush(_locale: 'ar' | 'en'): Promise<PushStatus> {
 }
 export async function syncPush(_locale: 'ar' | 'en') {}
 export async function forgetThisPhone() {}
+export async function forgetThisPhoneLocally() {}
 export function useNotificationTaps() {}

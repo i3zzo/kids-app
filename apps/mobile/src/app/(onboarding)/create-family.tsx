@@ -79,6 +79,7 @@ export default function CreateFamily() {
           <Txt style={{ flex: 1, fontSize: 15 }}>{t.consentText}</Txt>
         </Row>
       </Pressable>
+      <Button title={t.readPrivacyNotice} variant="link" onPress={() => router.push('/privacy')} testID="read-privacy" />
       {error ? <ErrorText>{error}</ErrorText> : null}
       <Button title={t.createFamily} onPress={create} loading={busy === 'create'} disabled={busy !== null} testID="create-family" />
 

@@ -515,3 +515,13 @@ export async function streamTipsAI(childId: string, section: TipSection, lang: '
   if (!all.trim()) throw new Error('failed');
   onText(all);
 }
+
+// ---------------------------------------------------------------- privacy
+/** Everything Yahal holds about this parent and their family, as one object. */
+export async function exportMyData() {
+  return check(await supabase.rpc('export_my_data')) as Record<string, unknown>;
+}
+/** Permanently deletes this parent's account (and, for the owner, the whole family). */
+export async function deleteMyAccount() {
+  check(await supabase.rpc('delete_my_account', { confirm: 'DELETE' }));
+}

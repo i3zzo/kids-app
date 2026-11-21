@@ -59,6 +59,11 @@ export async function syncPush(locale: 'ar' | 'en') {
 }
 
 /** Before signing out: stop sending this account's reminders to this phone. */
+/** After the account is deleted, the server already removed this phone; just forget it here. */
+export async function forgetThisPhoneLocally() {
+  await AsyncStorage.removeItem(TOKEN_KEY);
+}
+
 export async function forgetThisPhone() {
   const token = await AsyncStorage.getItem(TOKEN_KEY);
   if (!token) return;

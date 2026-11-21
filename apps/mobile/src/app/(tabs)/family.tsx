@@ -101,6 +101,7 @@ export default function Family() {
 
       <Txt style={{ fontSize: 18, fontWeight: '700', marginTop: space.lg }} accessibilityRole="header">{t.settings}</Txt>
       <Button title={`🔔 ${t.notifications}`} variant="secondary" onPress={() => router.push('/settings/notifications')} testID="open-notifications" />
+      <Button title={`🔒 ${t.privacyAndData}`} variant="secondary" onPress={() => router.push('/settings/privacy')} testID="open-privacy" />
       <Choice
         label={t.language}
         value={locale}

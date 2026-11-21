@@ -3,7 +3,8 @@
 // check — the database enforces who can see what.
 import type { Session } from '@supabase/supabase-js';
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from 'react';
-import { forgetThisPhone } from './notifications';
+import { forgetThisPhone, forgetThisPhoneLocally } from './notifications';
+import { deleteMyAccount } from './api';
 import { supabase } from './supabase';
 
 export type FamilyRole = 'owner' | 'co_parent';
@@ -20,6 +21,8 @@ type SessionState = {
   loadFailed: boolean;
   refresh: () => Promise<void>;
   signOut: () => Promise<void>;
+  /** Permanently deletes the account on the server, then signs out here. */
+  deleteAccount: () => Promise<void>;
 };
 
 const Ctx = createContext<SessionState | null>(null);
@@ -76,9 +79,16 @@ export function SessionProvider({ children }: { children: ReactNode }) {
     await supabase.auth.signOut();
   }, []);
 
+  const deleteAccount = useCallback(async () => {
+    await deleteMyAccount();
+    // The server has already removed the login, devices and settings.
+    await forgetThisPhoneLocally();
+    await supabase.auth.signOut({ scope: 'local' });
+  }, []);
+
   const value = useMemo(
-    () => ({ session, membership, hasChildren, loadFailed, refresh, signOut }),
-    [session, membership, hasChildren, loadFailed, refresh, signOut],
+    () => ({ session, membership, hasChildren, loadFailed, refresh, signOut, deleteAccount }),
+    [session, membership, hasChildren, loadFailed, refresh, signOut, deleteAccount],
   );
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>;
 }
