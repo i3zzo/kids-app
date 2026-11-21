@@ -5,13 +5,18 @@
 // This only controls navigation. Data protection lives in the database.
 import { LocaleProvider, Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
-import { ActivityIndicator, View } from 'react-native';
+import * as SplashScreen from 'expo-splash-screen';
+import { useEffect } from 'react';
+import { ActivityIndicator, Image, View } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { Button, Txt } from '@/components/ui';
 import { I18nProvider, useI18n } from '@/lib/i18n';
 import { SessionProvider, useSession } from '@/lib/session';
 import { isConfigured } from '@/lib/supabase';
 import { colors } from '@/theme';
+
+// Keep the logo splash on screen until we know where to send the parent.
+SplashScreen.preventAutoHideAsync().catch(() => {});
 
 export default function RootLayout() {
   return (
@@ -29,6 +34,11 @@ export default function RootLayout() {
 function Gate() {
   const { t, isRTL, hasChosen } = useI18n();
   const { session, membership, hasChildren, loadFailed, refresh } = useSession();
+  const loading = hasChosen === null || session === undefined || (session && (membership === undefined || (membership && hasChildren === undefined)));
+  const showingScreen = !isConfigured || Boolean(session && loadFailed) || !loading;
+  useEffect(() => {
+    if (showingScreen) SplashScreen.hideAsync().catch(() => {});
+  }, [showingScreen]);
 
   if (!isConfigured) {
     return (
@@ -47,11 +57,12 @@ function Gate() {
     );
   }
 
-  const loading = hasChosen === null || session === undefined || (session && (membership === undefined || (membership && hasChildren === undefined)));
   if (loading) {
+    // Same look as the phone's launch screen, so there's no jump between them.
     return (
-      <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: colors.sandLight }}>
-        <ActivityIndicator color={colors.teal} size="large" accessibilityLabel={t.loading} />
+      <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', gap: 24, backgroundColor: colors.teal }}>
+        <Image source={require('../../assets/splash-logo.png')} style={{ width: 200, height: 200 }} accessibilityIgnoresInvertColors alt="Yahal" />
+        <ActivityIndicator color={colors.white} accessibilityLabel={t.loading} />
       </View>
     );
   }

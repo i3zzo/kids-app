@@ -128,6 +128,15 @@
           "color": "#0E7C86",
           "defaultChannel": "reminders"
         }
+      ],
+      [
+        "expo-splash-screen",
+        {
+          "backgroundColor": "#0E7C86",
+          "image": "./assets/splash-logo.png",
+          "imageWidth": 200,
+          "resizeMode": "contain"
+        }
       ]
     ],
     "scheme": "yahal",
