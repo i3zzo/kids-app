@@ -85,6 +85,9 @@ function Gate() {
           <Stack.Screen name="event/[id]" options={{ title: t.editEvent }} />
           <Stack.Screen name="vaccines/[childId]" options={{ title: t.vaccineSchedule }} />
           <Stack.Screen name="dose/[id]" options={{ title: t.vaccine }} />
+          <Stack.Screen name="supply/new" options={{ title: t.addSupply, presentation: 'modal' }} />
+          <Stack.Screen name="supply/[id]" options={{ title: t.editSupply }} />
+          <Stack.Screen name="supplies/suggestions" options={{ title: t.suggestedItems }} />
           <Stack.Screen name="settings/notifications" options={{ title: t.notifications }} />
         </Stack.Protected>
       </Stack>
