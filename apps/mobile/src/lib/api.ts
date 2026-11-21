@@ -61,8 +61,9 @@ function check<T>(res: { data: T | null; error: { message: string; code?: string
 export async function createFamily(name: string) {
   return check(await supabase.rpc('create_family', { family_name: name, accepted_privacy_version: PRIVACY_VERSION })) as string;
 }
+/** Returns the family id, or null when the code is wrong or expired. */
 export async function acceptInvite(code: string) {
-  return check(await supabase.rpc('accept_family_invite', { invite_code: code })) as string;
+  return check(await supabase.rpc('accept_family_invite', { invite_code: code })) as string | null;
 }
 export async function createInvite() {
   return check(await supabase.rpc('create_family_invite')) as string;

@@ -216,10 +216,14 @@ token_verifications = 30
 web3 = 30
 
 # Configure one of the supported captcha providers: `hcaptcha`, `turnstile`.
+# Bot check on sign-in. Off for local development. In production turn it on
+# with Cloudflare Turnstile (GOTRUE_SECURITY_CAPTCHA_ENABLED=true,
+# GOTRUE_SECURITY_CAPTCHA_PROVIDER=turnstile, GOTRUE_SECURITY_CAPTCHA_SECRET from
+# the server's environment) and set EXPO_PUBLIC_TURNSTILE_SITE_KEY in the app.
 # [auth.captcha]
 # enabled = true
-# provider = "hcaptcha"
-# secret = ""
+# provider = "turnstile"
+# secret = "env(SUPABASE_AUTH_CAPTCHA_SECRET)"
 
 [auth.email]
 # Allow/disallow the email provider. When false, users can't sign up or sign in with email.
@@ -292,9 +296,10 @@ max_frequency = "5s"
 # inactivity_timeout = "8h"
 
 # This hook runs before a new user is created and allows developers to reject the request based on the incoming user object.
-# [auth.hook.before_user_created]
-# enabled = true
-# uri = "pg-functions://postgres/auth/before-user-created-hook"
+# Yahal: only Kuwaiti mobile numbers may create an account (checked on the server).
+[auth.hook.before_user_created]
+enabled = true
+uri = "pg-functions://postgres/public/hook_before_user_created"
 
 # This hook runs before a token is issued and allows you to add additional claims based on the authentication method used.
 # [auth.hook.custom_access_token]

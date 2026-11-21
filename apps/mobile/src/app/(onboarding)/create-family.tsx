@@ -39,11 +39,15 @@ export default function CreateFamily() {
     setJoinError(null);
     setBusy('join');
     try {
-      await acceptInvite(code);
+      const familyId = await acceptInvite(code);
+      if (!familyId) {
+        setJoinError(t.invalidInvite);
+        return;
+      }
       await refresh(); // the root layout takes the parent to Home
     } catch (e) {
       const c = (e as { code?: string }).code;
-      setJoinError(c === '23514' ? t.familyFull : t.invalidInvite);
+      setJoinError(c === '23514' ? t.familyFull : c === '54000' ? t.tooManyTries : t.invalidInvite);
     } finally {
       setBusy(null);
     }
