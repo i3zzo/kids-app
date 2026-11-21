@@ -3,9 +3,11 @@
 import { router } from 'expo-router';
 import { View } from 'react-native';
 import { EventRow } from '@/components/EventRow';
+import { RemindersCard } from '@/components/RemindersCard';
 import { Button, Card, Dot, ErrorText, Muted, Row, Screen, Skeleton, Title, Txt } from '@/components/ui';
 import { listChildren, listEvents, listOpenVaccinations, type ChildVaccination } from '@/lib/api';
 import { addDays, toDay } from '@/lib/dates';
+import { expandEvents } from '@/lib/recurrence';
 import { formatDay, useI18n } from '@/lib/i18n';
 import { useFamily } from '@/lib/session';
 import { useLoad } from '@/lib/useLoad';
@@ -24,7 +26,7 @@ export default function Home() {
       listEvents(familyId, start, addDays(start, 8)),
       listOpenVaccinations(familyId, toDay(addDays(start, 90))),
     ]);
-    return { children, events, doses, today: toDay(start) };
+    return { children, events: expandEvents(events, start, addDays(start, 8)), doses, today: toDay(start) };
   }, [familyId]);
 
   if (error) return <Screen><ErrorText>{t.somethingWrong}</ErrorText><Button title={t.retry} onPress={reload} /></Screen>;
@@ -45,8 +47,10 @@ export default function Home() {
         <Title>{t.hello}{locale === 'ar' ? '،' : ','} {familyName}</Title>
       </View>
 
+      <RemindersCard hideWhenOn />
+
       <Section title={t.today}>
-        {todays.length === 0 ? <Muted>{t.nothingToday}</Muted> : todays.map((e) => <EventRow key={e.id} e={e} child={e.child_id ? byId.get(e.child_id) : undefined} />)}
+        {todays.length === 0 ? <Muted>{t.nothingToday}</Muted> : todays.map((e) => <EventRow key={e.key} e={e} child={e.child_id ? byId.get(e.child_id) : undefined} />)}
       </Section>
 
       <Section title={t.nextVaccine}>
@@ -74,7 +78,7 @@ export default function Home() {
 
       {week.length > 0 ? (
         <Section title={t.upcomingWeek}>
-          {week.map((e) => <EventRow key={e.id} e={e} child={e.child_id ? byId.get(e.child_id) : undefined} showDate />)}
+          {week.map((e) => <EventRow key={e.key} e={e} child={e.child_id ? byId.get(e.child_id) : undefined} showDate />)}
         </Section>
       ) : null}
     </Screen>

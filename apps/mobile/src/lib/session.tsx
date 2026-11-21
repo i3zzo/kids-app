@@ -3,6 +3,7 @@
 // check — the database enforces who can see what.
 import type { Session } from '@supabase/supabase-js';
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from 'react';
+import { forgetThisPhone } from './notifications';
 import { supabase } from './supabase';
 
 export type FamilyRole = 'owner' | 'co_parent';
@@ -70,6 +71,8 @@ export function SessionProvider({ children }: { children: ReactNode }) {
   }, [session, refresh]);
 
   const signOut = useCallback(async () => {
+    // Stop reminders for this account on this phone first (needs the session).
+    await forgetThisPhone();
     await supabase.auth.signOut();
   }, []);
 

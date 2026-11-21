@@ -30,7 +30,9 @@ jobs:
       - uses: actions/checkout@v4
       - uses: supabase/setup-cli@v1
         with:
-          version: latest
+          # Pinned: "latest" asks the GitHub API to look up the newest release, which
+          # fails when that API is rate-limited. Same version as local development.
+          version: 3.2.0
       - run: cp supabase/.env.example supabase/.env
       - run: supabase start -x studio,imgproxy,edge-runtime,logflare,vector,supavisor,realtime,storage-api,postgres-meta,mailpit
       - run: supabase test db

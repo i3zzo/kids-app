@@ -77,3 +77,5 @@ cd apps/mobile && npm run typecheck && npm test
 ## Where each build step is explained
 
 - [Step 1: sign-in, family, children, calendar and vaccinations](docs/explain/01-family-children-calendar.md)
+- [Step 2: security fixes before launch](docs/explain/02-security-hardening.md)
+- [Step 3: reminders, repeating events and notification settings](docs/explain/03-reminders.md)

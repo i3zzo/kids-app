@@ -63,6 +63,13 @@
             "usesCleartextTraffic": false
           }
         }
+      ],
+      [
+        "expo-notifications",
+        {
+          "color": "#0E7C86",
+          "defaultChannel": "reminders"
+        }
       ]
     ],
     "scheme": "yahal",
