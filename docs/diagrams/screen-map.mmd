@@ -1,0 +1,56 @@
+flowchart TD
+  classDef tab fill:#0E7C86,stroke:#0A5F67,color:#fff,font-weight:bold
+  classDef later fill:#fff,stroke:#FF7A59,stroke-dasharray:5 4,color:#1F2A37
+  classDef start fill:#F6E7CF,stroke:#1F2A37,color:#1F2A37
+
+  A[Splash]:::start --> B[Choose language<br/>العربية / English]:::start
+  B --> C[Sign in<br/>phone + one-time code]:::start
+  C -->|new user| D[Create family + consent]:::start
+  D --> E[Add first child<br/>name, birth date, gender]:::start
+  C -->|returning| TB
+  E --> TB
+  TB[[Bottom tab bar]]:::start
+  TB --> H
+  TB --> CAL
+  TB --> SUP
+  TB --> EXP
+  TB --> FAM
+
+  H((Home)):::tab
+  CAL((Calendar)):::tab
+  SUP((Supplies)):::tab
+  EXP((Explore)):::tab
+  FAM((Family)):::tab
+
+  H --> H1[Child switcher]
+  H --> H2[Today: events + reminders]
+  H --> H3[Running-low supplies]
+  H --> H4[Next vaccination]
+  H --> H5[AI tips for this child]
+  H5 --> T[Tips by section<br/>activities, learning, health, sleep, feeding]
+
+  CAL --> C1[Month / week / day view]
+  C1 --> C2[Event details]
+  C2 --> C3[Add / edit event + reminder]
+  CAL --> C4[Vaccination schedule MOH]
+  C4 --> C5[Mark dose done / reschedule]
+
+  SUP --> S1[Supplies by category]
+  S1 --> S2[Item: quantity + low level]
+  SUP --> S3[Suggested items for age<br/>brands in Kuwait supermarkets]
+  S3 --> S2
+
+  EXP --> X1[Directory: search + filters]
+  X1 --> X2[Place details<br/>call, WhatsApp, map]
+  X2 -.-> X3[Book + pay]:::later
+  EXP --> G1[Government guides]
+  G1 --> G2[Guide steps + document checklist]
+  EXP --> O1[Toy and clothing offers]
+  O1 --> O2[Offer details]
+
+  FAM --> F1[Children list]
+  F1 --> F2[Child profile + health info]
+  F1 --> F3[Add child]
+  F2 -.-> F6[Growth charts]:::later
+  FAM --> F4[Parents: invite co-parent]
+  FAM --> F5[Settings: language, notifications,<br/>privacy, export / delete data, disclaimers]
