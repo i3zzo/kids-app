@@ -48,6 +48,8 @@ select set_config('request.jwt.claims', '{"sub":"88888888-8888-8888-8888-8888888
 update public.supply_items set quantity = 0;
 select public.register_device('ExponentPushToken[hind1]', 'ios', 'en');
 reset role;
+-- The real cron job may already have run today on this database.
+delete from public.job_runs where job = 'supply_low';
 select is(public.queue_supply_reminders(),
   case when (now() at time zone 'Asia/Kuwait')::time >= '18:00' then 1 else 0 end,
   'one low-supply reminder per parent per child, after 18:00 Kuwait time');

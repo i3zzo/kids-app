@@ -26,6 +26,8 @@ select is((select count(*)::int from public.my_children_tips()), 5, 'a 7-month-o
 reset role;
 -- Pretend it is 18:30 in Kuwait for the supplies job.
 create or replace function public.kuwait_now() returns timestamp language sql stable as $$ select current_date + time '18:30' $$;
+-- The real cron job may already have run today on this database.
+delete from public.job_runs where job = 'supply_low';
 insert into public.device_tokens (token, user_id, platform) values ('ExponentPushToken[launchtest]', 'b1000000-0000-0000-0000-000000000001', 'ios');
 insert into public.supply_items (family_id, child_id, category, name, quantity, low_threshold)
 select family_id, id, 'diapering', 'Diapers', 0, 1 from public.children where first_name = 'Mine';

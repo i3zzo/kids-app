@@ -53,7 +53,7 @@ select lives_ok($$ select public.mark_schedule_reviewed((select id from public.v
 
 -- audit
 select pg_temp.login('bbbbbbbb-0000-0000-0000-000000000001');
-select ok((select count(*) from public.audit_log where table_name = 'places' and action = 'INSERT') = 1, 'the audit log records the new place');
+select ok((select count(*) from public.audit_log where table_name = 'places' and action = 'INSERT' and actor = 'bbbbbbbb-0000-0000-0000-000000000002') = 1, 'the audit log records the new place');
 select throws_ok($$ delete from public.audit_log $$, '42501', null, 'nobody can delete the audit log');
 
 select * from finish();
