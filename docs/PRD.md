@@ -2,7 +2,7 @@
 
 | | |
 | --- | --- |
-| **Working title** | **Yahal · ياهل** (recommended name, see section 16) |
+| **App name** | **Yahal · ياهل** (chosen by Ezzo, 21 Nov 2026 — see section 16) |
 | **Owner** | Ezzo |
 | **Status** | Draft v0.2 — updated with Ezzo's decisions (section 15) |
 | **Date** | 20 November 2026 (v0.1), 21 November 2026 (v0.2) |
@@ -323,7 +323,7 @@ How it relates to this PRD:
 
 | Question | Decision |
 | --- | --- |
-| App name and brand | Claude to propose a catchy name, colours and logo — see section 16 (Yahal · ياهل recommended, awaiting Ezzo's pick) |
+| App name and brand | Claude to propose a catchy name, colours and logo — **Yahal · ياهل** chosen, with the teal/sand/coral palette and the child-face logo (section 16) |
 | MVP split | As proposed; **booking moves to Phase 2** |
 | Target families | **All parents in Kuwait**, any nationality |
 | Medical commissions | **Phase 2** (legal check then) |
@@ -337,7 +337,7 @@ How it relates to this PRD:
 
 ### 15.2 Still open
 
-1. Final pick of the name (section 16), and a trademark / app-store name check.
+1. Trademark, App Store / Google Play name, domain and Instagram handle check for **Yahal · ياهل**.
 2. Which Kuwait hosting provider (cloud region in Kuwait or local data centre).
 3. Who checks health content against MOH guidance before launch (a paediatrician advisor is recommended).
 4. Rules on marketing infant formula in Kuwait, before any formula offers or promotions.
@@ -347,12 +347,12 @@ How it relates to this PRD:
 
 ### 16.1 Name
 
-**Recommended: Yahal · ياهل** — the Kuwaiti/Gulf word for a child ("ياهل", plural "يهال"). It is short, warm, instantly local, easy to say in both languages, and covers all ages from baby to 10 — not only newborns.
+**Chosen: Yahal · ياهل** — the Kuwaiti/Gulf word for a child ("ياهل", plural "يهال"). It is short, warm, instantly local, easy to say in both languages, and covers all ages from baby to 10 — not only newborns.
 
 - **Tagline (AR):** كل شي يخص يهالك… بمكان واحد
 - **Tagline (EN):** Everything for your little ones, in one place
 
-Alternatives:
+Alternatives considered (not chosen):
 
 | Name | Meaning / why | Watch out |
 | --- | --- | --- |
@@ -360,7 +360,7 @@ Alternatives:
 | **Dana Kids · دانة** | "Dana" is a large pearl — Kuwait's pearl-diving heritage | Common girl's name; less obviously about children |
 | **Qurra · قُرّة** | From "قرة عين" (joy of the eye) | Harder to pronounce for English speakers |
 
-**Round 2 options** (requested 21 Nov 2026), each with its own logo and colours — see `brand/options-v2.png`:
+**Round 2 options** (requested 21 Nov 2026, not chosen), each with its own logo and colours — see `brand/options-v2.png`:
 
 | Option | Name | Meaning | Logo | Colours |
 | --- | --- | --- | --- | --- |
