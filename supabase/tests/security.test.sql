@@ -27,8 +27,8 @@ select pg_temp.login('11111111-1111-1111-1111-111111111111');
 
 select throws_ok($$ select public.create_family('Al-Amal', '') $$, '22023', null,
   'a family cannot be created without accepting the privacy notice');
-select lives_ok($$ select public.create_family('Al-Amal', 'privacy-2026-11') $$, 'Amal creates a family');
-select throws_ok($$ select public.create_family('Second', 'privacy-2026-11') $$, '23505', null,
+select lives_ok($$ select public.create_family('Al-Amal', 'privacy-2026-11-draft') $$, 'Amal creates a family');
+select throws_ok($$ select public.create_family('Second', 'privacy-2026-11-draft') $$, '23505', null,
   'a parent can only belong to one family');
 select throws_ok($$ insert into public.families (name, created_by, privacy_version)
   values ('x', '11111111-1111-1111-1111-111111111111', 'v') $$, '42501', null,
@@ -69,7 +69,7 @@ select is(length((select code from invite)), 8, 'owner gets an 8-character invit
 
 -- ---------------------------------------------------------------- Sara (other family)
 select pg_temp.login('33333333-3333-3333-3333-333333333333');
-select public.create_family('Al-Sara', 'privacy-2026-11');
+select public.create_family('Al-Sara', 'privacy-2026-11-draft');
 
 select is((select count(*)::int from public.children), 0, 'Sara cannot see Amal''s children');
 select is((select count(*)::int from public.events), 0, 'Sara cannot see Amal''s events');
@@ -99,8 +99,7 @@ select lives_ok($$ select public.create_family_invite() $$, 'Sara''s own family 
 
 -- ---------------------------------------------------------------- Badr joins Amal
 select pg_temp.login('22222222-2222-2222-2222-222222222222');
-select throws_ok($$ select public.accept_family_invite('WRONG123') $$, '22023', null,
-  'a wrong invite code is rejected');
+select is(public.accept_family_invite('WRONG123'), null, 'a wrong invite code is rejected');
 select lives_ok(format('select public.accept_family_invite(%L)', (select lower(code) from invite)),
   'Badr joins with the code (case-insensitive)');
 select is((select first_name from public.children), 'Noor',

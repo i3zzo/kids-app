@@ -11,7 +11,7 @@ import { space } from '@/theme';
 
 export default function Verify() {
   const { t } = useI18n();
-  const { phone } = useLocalSearchParams<{ phone: string }>();
+  const { phone, captcha } = useLocalSearchParams<{ phone: string; captcha?: string }>();
   const [code, setCode] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
@@ -28,6 +28,8 @@ export default function Verify() {
   }
 
   async function resend() {
+    // With the bot check on, a new check is needed: go back to the phone screen.
+    if (captcha) return router.back();
     setResent(true);
     await supabase.auth.signInWithOtp({ phone: phone! });
   }

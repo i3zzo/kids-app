@@ -3,6 +3,7 @@
 import { router } from 'expo-router';
 import { useState } from 'react';
 import { Button, Field, Muted, Screen, Title } from '@/components/ui';
+import { Captcha, captchaSiteKey } from '@/components/Captcha';
 import { useI18n } from '@/lib/i18n';
 import { toKuwaitE164 } from '@/lib/phone';
 import { supabase } from '@/lib/supabase';
@@ -14,16 +15,18 @@ export default function SignIn() {
   const [phone, setPhone] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
+  const [captchaToken, setCaptchaToken] = useState<string | null>(null);
 
   async function send() {
     const e164 = toKuwaitE164(phone);
     if (!e164) return setError(t.invalidPhone);
+    if (captchaSiteKey && !captchaToken) return setError(t.captchaNeeded);
     setError(null);
     setBusy(true);
-    const { error: err } = await supabase.auth.signInWithOtp({ phone: e164 });
+    const { error: err } = await supabase.auth.signInWithOtp({ phone: e164, options: { captchaToken: captchaToken ?? undefined } });
     setBusy(false);
     if (err) return setError(t.somethingWrong);
-    router.push({ pathname: '/verify', params: { phone: e164 } });
+    router.push({ pathname: '/verify', params: { phone: e164, captcha: captchaToken ?? '' } });
   }
 
   return (
@@ -45,6 +48,7 @@ export default function SignIn() {
         testID="phone"
         style={{ textAlign: 'left', writingDirection: 'ltr' }}
       />
+      <Captcha onToken={setCaptchaToken} locale={locale} />
       <Button title={t.sendCode} onPress={send} loading={busy} testID="send-code" />
       <Button
         variant="link"

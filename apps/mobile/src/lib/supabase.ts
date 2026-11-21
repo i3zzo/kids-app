@@ -6,19 +6,28 @@
 // decided by Row Level Security rules inside the database
 // (supabase/migrations/), never by this app.
 import 'react-native-url-polyfill/auto';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { createClient } from '@supabase/supabase-js';
 import { AppState, Platform } from 'react-native';
+import { secureSessionStore } from './secureSessionStore';
 
 const url = process.env.EXPO_PUBLIC_SUPABASE_URL;
 const anonKey = process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY;
 
 export const isConfigured = Boolean(url && anonKey);
 
+// Release builds must talk to the server over HTTPS only. (Development builds
+// may use http:// to reach the Supabase running on your computer; so may the
+// web preview when it points at this computer.)
+const localWebPreview = Platform.OS === 'web' && /^http:\/\/(127\.0\.0\.1|localhost)(:|\/|$)/.test(url ?? '');
+if (!__DEV__ && url && !url.startsWith('https://') && !localWebPreview) {
+  throw new Error('EXPO_PUBLIC_SUPABASE_URL must start with https:// in release builds');
+}
+
 export const supabase = createClient(url ?? 'http://missing-config.invalid', anonKey ?? 'missing', {
   auth: {
-    // Keeps the parent signed in between app launches.
-    storage: Platform.OS === 'web' && typeof window === 'undefined' ? undefined : AsyncStorage,
+    // Phones: encrypted session, key in Keychain/Keystore.
+    // Web preview: the browser's own storage (default).
+    storage: Platform.OS === 'web' ? undefined : secureSessionStore,
     autoRefreshToken: true,
     persistSession: true,
     detectSessionInUrl: false,

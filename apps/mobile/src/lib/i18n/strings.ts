@@ -27,6 +27,7 @@ const ar = {
   phonePlaceholder: '5XXX XXXX',
   invalidPhone: 'أدخل رقم هاتف كويتي صحيح من 8 أرقام',
   sendCode: 'أرسل الرمز',
+  captchaNeeded: 'أكمل التحقق بأنك لست روبوتاً',
   verifyTitle: 'أدخل الرمز',
   verifyHint: 'أرسلنا رمزاً من 6 أرقام إلى',
   codeLabel: 'الرمز',
@@ -46,6 +47,7 @@ const ar = {
   inviteCode: 'رمز الدعوة',
   joinFamily: 'انضم إلى العائلة',
   invalidInvite: 'رمز الدعوة غير صالح أو منتهي',
+  tooManyTries: 'محاولات كثيرة. حاول مرة أخرى بعد ساعة.',
   or: 'أو',
 
   // child
@@ -167,6 +169,7 @@ const en: Strings = {
   phonePlaceholder: '5XXX XXXX',
   invalidPhone: 'Enter a valid 8-digit Kuwaiti mobile number',
   sendCode: 'Send code',
+  captchaNeeded: "Please complete the check that you're not a robot",
   verifyTitle: 'Enter the code',
   verifyHint: 'We sent a 6-digit code to',
   codeLabel: 'Code',
@@ -185,6 +188,7 @@ const en: Strings = {
   inviteCode: 'Invite code',
   joinFamily: 'Join family',
   invalidInvite: 'This invite code is not valid or has expired',
+  tooManyTries: 'Too many tries. Please try again in an hour.',
   or: 'or',
 
   addFirstChild: 'Add your first child',
