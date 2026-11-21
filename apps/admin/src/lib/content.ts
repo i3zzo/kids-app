@@ -4,7 +4,7 @@
 import type { StaffRole } from './supabase';
 
 export type FieldType = 'text' | 'textarea' | 'number' | 'date' | 'url' | 'select' | 'lines';
-export type Field = { key: string; label: string; type: FieldType; options?: string[]; required?: boolean; dir?: 'rtl' | 'ltr' };
+export type Field = { key: string; label: string; type: FieldType; options?: string[]; required?: boolean; dir?: 'rtl' | 'ltr'; step?: string };
 export type ContentType = {
   key: string;
   table: string;
@@ -32,10 +32,10 @@ export const CONTENT: Record<string, ContentType> = {
     table: 'places',
     title: 'Directory',
     kind: 'general',
-    listColumns: ['name_en', 'category', 'governorate', 'verified_on'],
+    listColumns: ['name_en', 'category', 'governorate', 'price_min_kwd', 'verified_on'],
     searchColumns: ['name_en', 'name_ar'],
     order: 'name_en',
-    hint: 'Set "Verified on" only after calling or visiting the place. Phones are +965 and 8 digits.',
+    hint: 'Set "Verified on" only after calling or visiting the place. Phones are +965 and 8 digits. Enter a price only if a source shows it, with the source link and the date you checked; leave it empty when it isn\'t published.',
     fields: [
       { key: 'category', label: 'Category', type: 'select', options: ['activity', 'nursery', 'school', 'hospital', 'paediatrician', 'toy_store', 'clothing_store'], required: true },
       ar('name_ar', 'Name (Arabic)'),
@@ -43,6 +43,7 @@ export const CONTENT: Record<string, ContentType> = {
       { key: 'governorate', label: 'Governorate', type: 'select', options: ['capital', 'hawalli', 'farwaniya', 'mubarak_al_kabeer', 'ahmadi', 'jahra'], required: true },
       ar('area_ar', 'Area (Arabic)', 'text', false),
       en('area_en', 'Area (English)', 'text', false),
+      en('address', 'Address', 'text', false),
       ar('description_ar', 'Description (Arabic)', 'textarea', false),
       en('description_en', 'Description (English)', 'textarea', false),
       ...AGE,
@@ -53,6 +54,13 @@ export const CONTENT: Record<string, ContentType> = {
       { key: 'maps_url', label: 'Map link (https://)', type: 'url' },
       ar('hours_ar', 'Hours (Arabic)', 'text', false),
       en('hours_en', 'Hours (English)', 'text', false),
+      { key: 'price_min_kwd', label: 'Price from (KD)', type: 'number', step: 'any' },
+      { key: 'price_max_kwd', label: 'Price to (KD, if a range)', type: 'number', step: 'any' },
+      { key: 'price_unit', label: 'Price is per', type: 'select', options: ['', 'visit', 'entry', 'hour', 'month', 'year'] },
+      ar('price_note_ar', 'Price note (Arabic)', 'text', false),
+      en('price_note_en', 'Price note (English)', 'text', false),
+      { key: 'source_url', label: 'Source (https://)', type: 'url' },
+      { key: 'source_checked_on', label: 'Source checked on', type: 'date' },
       { key: 'verified_on', label: 'Verified on', type: 'date' },
     ],
     defaults: { category: 'nursery', governorate: 'capital', min_age_months: 0, max_age_months: 131 },

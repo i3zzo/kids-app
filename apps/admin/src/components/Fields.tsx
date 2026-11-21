@@ -20,7 +20,7 @@ export function Fields({ fields, values, onChange }: { fields: Field[]; values: 
             ) : wide ? (
               <textarea {...common} rows={f.type === 'lines' ? 4 : 3} onChange={(e) => onChange(f.key, e.target.value)} />
             ) : (
-              <input {...common} type={f.type === 'number' ? 'number' : f.type === 'date' ? 'date' : f.type === 'url' ? 'url' : 'text'} onChange={(e) => onChange(f.key, e.target.value)} />
+              <input {...common} type={f.type === 'number' ? 'number' : f.type === 'date' ? 'date' : f.type === 'url' ? 'url' : 'text'} step={f.step} onChange={(e) => onChange(f.key, e.target.value)} />
             )}
           </label>
         );

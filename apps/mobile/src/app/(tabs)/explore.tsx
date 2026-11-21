@@ -19,6 +19,7 @@ import {
 } from '@/lib/api';
 import { ageParts, toDay } from '@/lib/dates';
 import { guideFits } from '@/lib/guides';
+import { formatPrice, mapLink } from '@/lib/places';
 import { formatDay, useI18n } from '@/lib/i18n';
 import { useLoad } from '@/lib/useLoad';
 import { colors, space } from '@/theme';
@@ -143,10 +144,12 @@ function Directory() {
     const area = locale === 'ar' ? p.area_ar : p.area_en;
     const desc = locale === 'ar' ? p.description_ar : p.description_en;
     const hours = locale === 'ar' ? p.hours_ar : p.hours_en;
+    const price = formatPrice(p, locale);
+    const priceNote = locale === 'ar' ? p.price_note_ar : p.price_note_en;
     const actions = [
       p.phone ? { label: t.call, url: `tel:${p.phone}` } : null,
       p.whatsapp ? { label: t.whatsapp, url: `https://wa.me/${p.whatsapp.replace(/\D/g, '')}` } : null,
-      p.maps_url ? { label: t.map, url: p.maps_url } : null,
+      { label: t.map, url: mapLink(p) },
       p.website ? { label: t.website, url: p.website } : null,
     ].filter(Boolean) as { label: string; url: string }[];
     return (
@@ -154,7 +157,11 @@ function Directory() {
         <Txt style={{ fontWeight: '700' }}>{locale === 'ar' ? p.name_ar : p.name_en}</Txt>
         <Muted>{[t[`gov_${p.governorate}`], area].filter(Boolean).join(' · ')}</Muted>
         {desc ? <Txt>{desc}</Txt> : null}
+        {p.address ? <Muted>{p.address}</Muted> : null}
         {hours ? <Muted>{hours}</Muted> : null}
+        <Txt testID={`price-${p.name_en}`}>{price ?? t.priceNotPublished}</Txt>
+        {priceNote ? <Muted style={{ fontSize: 12 }}>{priceNote}</Muted> : null}
+        {p.source_checked_on ? <Muted style={{ fontSize: 12 }}>{t.sourceChecked}: {formatDay(p.source_checked_on, locale)}</Muted> : null}
         {!p.verified_on ? <Muted style={{ fontSize: 12, color: colors.warning }}>{t.notConfirmed}</Muted> : null}
         {actions.length ? (
           <Row style={{ flexWrap: 'wrap' }}>
