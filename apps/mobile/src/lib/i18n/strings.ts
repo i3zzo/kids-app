@@ -259,6 +259,25 @@ const ar = {
   offerToys: 'ألعاب',
   offerClothing: 'ملابس',
   allAges: 'كل الأعمار',
+  // tips
+  tips: 'نصائح',
+  tipOfTheDay: 'نصيحة اليوم',
+  allTips: 'كل النصائح',
+  tipsFor: 'نصائح لعمر',
+  tipsDisclaimer: 'معلومات عامة للتوعية وليست نصيحة طبية. لأي قلق على صحة طفلك راجع طبيب الأطفال أو المركز الصحي.',
+  sec_sleep: 'النوم',
+  sec_feeding: 'التغذية',
+  sec_activities: 'الأنشطة',
+  sec_learning: 'التعلّم',
+  sec_health: 'الصحة',
+  personaliseAI: 'خصّص النصائح بالذكاء الاصطناعي',
+  aiPrivacy: 'نرسل للذكاء الاصطناعي عمر طفلك بالأشهر وجنسه فقط، دون الاسم أو أي معلومات أخرى. الإجابة مبنية على النصائح المراجَعة أعلاه.',
+  aiWriting: 'جارٍ الكتابة…',
+  aiLabel: 'مخصّص بالذكاء الاصطناعي وقد يخطئ. ليست نصيحة طبية.',
+  aiDailyLimit: 'وصلت إلى الحد اليومي للنصائح المخصّصة. حاول غداً.',
+  aiNotConfigured: 'النصائح المخصّصة غير متاحة حالياً.',
+  stop: 'إيقاف',
+  noTips: 'لا توجد نصائح لهذا العمر بعد.',
 };
 
 type Strings = typeof ar;
@@ -509,6 +528,25 @@ const en: Strings = {
   offerToys: 'Toys',
   offerClothing: 'Clothing',
   allAges: 'All ages',
+  // tips
+  tips: 'Tips',
+  tipOfTheDay: 'Tip of the day',
+  allTips: 'All tips',
+  tipsFor: 'Tips for age',
+  tipsDisclaimer: "General information, not medical advice. If you are worried about your child's health, see your paediatrician or health centre.",
+  sec_sleep: 'Sleep',
+  sec_feeding: 'Feeding',
+  sec_activities: 'Activities',
+  sec_learning: 'Learning',
+  sec_health: 'Health',
+  personaliseAI: 'Personalise with AI',
+  aiPrivacy: "We send the AI only your child's age in months and gender, never their name or anything else. The answer is based on the reviewed tips above.",
+  aiWriting: 'Writing…',
+  aiLabel: 'Personalised by AI and may be wrong. Not medical advice.',
+  aiDailyLimit: "You have reached today's limit for personalised tips. Try again tomorrow.",
+  aiNotConfigured: 'Personalised tips are not available right now.',
+  stop: 'Stop',
+  noTips: 'No tips for this age yet.',
 };
 
 export const strings = { ar, en };

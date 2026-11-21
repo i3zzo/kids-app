@@ -26,7 +26,7 @@ export default function Overview() {
   return (
     <div>
       <h1>Overview</h1>
-      <p className="hint">Content goes draft → in review → published. Directory, offers, guides and brands: any team member can publish. Suggested supplies (health content): only a health reviewer.</p>
+      <p className="hint">Content goes draft → in review → published. Directory, offers, guides and brands: any team member can publish. Suggested supplies and the tips library (health content): only a health reviewer.</p>
       <table>
         <thead><tr><th>Content</th><th>Waiting for review</th><th>Drafts</th><th>You can publish</th></tr></thead>
         <tbody>

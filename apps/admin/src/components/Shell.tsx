@@ -22,6 +22,7 @@ const MENU: { href: string; label: string; roles?: StaffRole[] }[] = [
   { href: '/guides/', label: 'Government guides' },
   { href: '/brands/', label: 'Brands' },
   { href: '/suggestions/', label: 'Suggested supplies' },
+  { href: '/tips/', label: 'Tips library' },
   { href: '/vaccines/', label: 'Vaccination schedule' },
   { href: '/staff/', label: 'Staff', roles: ['super_admin'] },
   { href: '/audit/', label: 'Audit log', roles: ['super_admin'] },

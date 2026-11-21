@@ -147,6 +147,28 @@ export const CONTENT: Record<string, ContentType> = {
     ],
     defaults: { category: 'health', min_age_months: 0, max_age_months: 131, is_formula: false, default_unit: 'pcs', default_low: 1, sort_order: 100 },
   },
+  tips: {
+    key: 'tips',
+    table: 'tips',
+    title: 'Tips library',
+    kind: 'health',
+    listColumns: ['title_en', 'section', 'min_age_months', 'max_age_months', 'only_gender'],
+    searchColumns: ['title_en', 'title_ar'],
+    order: 'min_age_months',
+    hint: 'Health content: only a health reviewer can publish. The AI may only rephrase published tips, so every word it uses starts here.',
+    fields: [
+      { key: 'section', label: 'Section', type: 'select', options: ['sleep', 'feeding', 'activities', 'learning', 'health'], required: true },
+      ...AGE,
+      { key: 'only_gender', label: 'Only for', type: 'select', options: ['', 'girl', 'boy'] },
+      ar('title_ar', 'Title (Arabic)'),
+      en('title_en', 'Title (English)'),
+      ar('body_ar', 'Tip (Arabic)', 'textarea'),
+      en('body_en', 'Tip (English)', 'textarea'),
+      { key: 'source', label: 'Source', type: 'text' },
+      { key: 'sort_order', label: 'Order', type: 'number', required: true },
+    ],
+    defaults: { section: 'sleep', min_age_months: 0, max_age_months: 131, sort_order: 100 },
+  },
 };
 
 export const STEP_FIELDS: Field[] = [

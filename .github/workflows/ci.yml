@@ -56,3 +56,13 @@ jobs:
       - run: cp supabase/.env.example supabase/.env
       - run: supabase start -x studio,imgproxy,edge-runtime,logflare,vector,supavisor,realtime,storage-api,postgres-meta,mailpit
       - run: supabase test db
+
+  functions:
+    name: AI function unit tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: node --test --experimental-strip-types supabase/functions/_shared/*.test.ts
