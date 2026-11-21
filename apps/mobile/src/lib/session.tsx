@@ -5,6 +5,7 @@ import type { Session } from '@supabase/supabase-js';
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from 'react';
 import { forgetThisPhone, forgetThisPhoneLocally } from './notifications';
 import { deleteMyAccount } from './api';
+import { verifyAccount } from './authGuard';
 import { supabase } from './supabase';
 
 export type FamilyRole = 'owner' | 'co_parent';
@@ -34,7 +35,12 @@ export function SessionProvider({ children }: { children: ReactNode }) {
   const [loadFailed, setLoadFailed] = useState(false);
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data }) => setSession(data.session));
+    supabase.auth.getSession().then(({ data }) => {
+      setSession(data.session);
+      // Once per app start: is the saved account still there? (It may have
+      // been deleted on another phone.) If not, this signs out.
+      if (data.session) void verifyAccount();
+    });
     const { data } = supabase.auth.onAuthStateChange((_event, s) => setSession(s));
     return () => data.subscription.unsubscribe();
   }, []);
@@ -70,7 +76,11 @@ export function SessionProvider({ children }: { children: ReactNode }) {
     setMembership(undefined);
     // If the server can't be reached, don't pretend the parent has no family
     // (that would send them to "Create family"). Show a retry screen instead.
-    refresh().catch(() => setLoadFailed(true));
+    refresh().catch(async () => {
+      // Signed out because the account is gone: the sign-in screen shows why.
+      if (await verifyAccount()) return;
+      setLoadFailed(true);
+    });
   }, [session, refresh]);
 
   const signOut = useCallback(async () => {

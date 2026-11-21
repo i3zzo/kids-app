@@ -35,3 +35,16 @@ This is sensitive health data, so it gets the strictest handling in the app:
 ## Screenshots
 
 `/mnt/project-files/docs/screenshots/special-needs-child-form.png` and `special-needs-family-tips-supplies-guides.png`.
+
+## Also in this PR: a clear message when the account is gone
+
+Found in phone testing: if the account was deleted (for example with "Delete my account" on the other phone, or a test database reset), the phone kept its old session. "Create family" was then refused and the app wrongly said "check your internet connection", with no way out.
+
+Now:
+- When the app opens, it asks the sign-in service once whether the account still exists. If the service says it doesn't, the app signs out on this phone.
+- If a request is refused in a way that can mean "this account is gone", the app checks again the same way and signs out if needed.
+- The sign-in screen then says: "Your session has ended or this account no longer exists. Please sign in again."
+- A network problem never signs anyone out. Only a clear answer from the sign-in service does.
+- The onboarding screens (create family, first child) now have a "Sign out" link, so nobody gets stuck there.
+
+Tested in the browser: deleting the account while the app is open, deleting it while the app is closed and then reopening, and the new sign-out link.

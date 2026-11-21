@@ -3,7 +3,7 @@
 import { useRef } from 'react';
 import { View } from 'react-native';
 import { ChildForm } from '@/components/ChildForm';
-import { Screen, Title } from '@/components/ui';
+import { Button, Screen, Title } from '@/components/ui';
 import { addChild, saveChildSupport, updateChild } from '@/lib/api';
 import { useI18n } from '@/lib/i18n';
 import { useSession } from '@/lib/session';
@@ -11,7 +11,7 @@ import { space } from '@/theme';
 
 export default function FirstChild() {
   const { t } = useI18n();
-  const { membership, refresh } = useSession();
+  const { membership, refresh, signOut } = useSession();
   // If the child was saved but the special needs part failed, a second tap
   // updates that child instead of adding a duplicate.
   const created = useRef<string | null>(null);
@@ -29,6 +29,7 @@ export default function FirstChild() {
           await refresh(); // now "ready": the root layout opens Home
         }}
       />
+      <Button title={t.signOut} variant="link" onPress={() => signOut().catch(() => {})} testID="onboarding-sign-out" />
     </Screen>
   );
 }

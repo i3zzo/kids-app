@@ -4,6 +4,7 @@
 import { useState } from 'react';
 import { View } from 'react-native';
 import { EMPTY_SUPPORT, NEEDS, type Child, type ChildSupport, type Gender, type NationalityGroup, type Need } from '@/lib/api';
+import { isSignedOutError } from '@/lib/authGuard';
 import { addDays, maxBirthAgeDay, parseDay, toDay } from '@/lib/dates';
 import { useI18n } from '@/lib/i18n';
 import { childColors, space } from '@/theme';
@@ -54,8 +55,8 @@ export function ChildForm({
         // with no needs picked, the note and card answer (hidden) are cleared too
         needs.length ? { needs: NEEDS.filter((n) => needs.includes(n)), notes: cleanNotes, has_pada_card: pada } : EMPTY_SUPPORT,
       );
-    } catch {
-      setError(t.somethingWrong);
+    } catch (e) {
+      setError(isSignedOutError((e as { code?: string }).code) ? t.accountGone : t.somethingWrong);
     } finally {
       setBusy(false);
     }

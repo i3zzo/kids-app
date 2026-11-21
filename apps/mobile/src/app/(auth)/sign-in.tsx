@@ -1,8 +1,9 @@
 // Step 1 of sign-in: the parent types their Kuwaiti mobile number.
 // Supabase Auth sends a one-time code by SMS. We never handle passwords.
 import { router } from 'expo-router';
-import { useState } from 'react';
-import { Button, Field, Muted, Screen, Title } from '@/components/ui';
+import { useEffect, useState } from 'react';
+import { Button, ErrorText, Field, Muted, Screen, Title } from '@/components/ui';
+import { onSignOutReason, takeSignOutReason } from '@/lib/authGuard';
 import { Captcha, captchaSiteKey } from '@/components/Captcha';
 import { useI18n } from '@/lib/i18n';
 import { toKuwaitE164 } from '@/lib/phone';
@@ -16,6 +17,9 @@ export default function SignIn() {
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
   const [captchaToken, setCaptchaToken] = useState<string | null>(null);
+  // Set when the app signed out by itself because the account is gone.
+  const [gone, setGone] = useState(() => takeSignOutReason() === 'account_gone');
+  useEffect(() => onSignOutReason(() => setGone(takeSignOutReason() === 'account_gone')), []);
 
   async function send() {
     const e164 = toKuwaitE164(phone);
@@ -36,6 +40,7 @@ export default function SignIn() {
         <Title>{t.signInTitle}</Title>
         <Muted>{t.signInHint}</Muted>
       </View>
+      {gone ? <ErrorText>{t.accountGone}</ErrorText> : null}
       <Field
         label={`${t.phoneLabel} (+965)`}
         placeholder={t.phonePlaceholder}

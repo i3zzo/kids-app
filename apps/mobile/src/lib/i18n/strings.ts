@@ -159,6 +159,7 @@ const ar = {
   settings: 'الإعدادات',
   language: 'اللغة',
   signOut: 'تسجيل الخروج',
+  accountGone: 'انتهت جلستك أو لم يعد هذا الحساب موجوداً (ربما حُذف من جهاز آخر). سجّل الدخول من جديد.',
   familyFull: 'العائلة تضم والدين بالفعل',
   // reminders
   repeat: 'التكرار',
@@ -495,6 +496,7 @@ const en: Strings = {
   settings: 'Settings',
   language: 'Language',
   signOut: 'Sign out',
+  accountGone: 'Your session has ended or this account no longer exists (it may have been deleted on another phone). Please sign in again.',
   familyFull: 'This family already has two parents',
   repeat: 'Repeat',
   repeat_none: 'Once',

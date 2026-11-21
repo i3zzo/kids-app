@@ -3,6 +3,7 @@
 // data (e.g. the child's name on an event, the vaccine name on a dose) comes in
 // the same request through Supabase nested selects — no "one query per row".
 import { fetch as streamingFetch } from 'expo/fetch';
+import { mightBeStaleSession, verifyAccount } from './authGuard';
 import { supabase } from './supabase';
 import { tagsForNeed, type PriceUnit, type SpecialNeed } from './places';
 import type { TipSection } from './tips';
@@ -63,7 +64,12 @@ export type ChildVaccination = {
 export type ScheduleVersion = { title_ar: string; title_en: string; source_url: string | null; review_note_ar: string | null; review_note_en: string | null };
 
 function check<T>(res: { data: T | null; error: { message: string; code?: string } | null }): T {
-  if (res.error) throw Object.assign(new Error(res.error.message), { code: res.error.code });
+  if (res.error) {
+    // If the account was deleted elsewhere, this signs out (in the background)
+    // and the sign-in screen explains why.
+    if (mightBeStaleSession(res.error.code)) void verifyAccount();
+    throw Object.assign(new Error(res.error.message), { code: res.error.code });
+  }
   return res.data as T;
 }
 
