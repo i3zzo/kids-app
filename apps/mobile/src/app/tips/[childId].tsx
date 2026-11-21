@@ -6,7 +6,7 @@ import { useEffect, useRef, useState } from 'react';
 import { View } from 'react-native';
 import { HealthNote } from '@/components/HealthNote';
 import { Button, Card, Dot, ErrorText, Muted, Row, Screen, Skeleton, Txt } from '@/components/ui';
-import { getChild, listTips, streamTipsAI, type AiError } from '@/lib/api';
+import { getChild, getChildSupport, listTips, streamTipsAI, type AiError } from '@/lib/api';
 import { ageLabel, ageParts } from '@/lib/dates';
 import { useI18n } from '@/lib/i18n';
 import { TIP_SECTIONS, type TipSection } from '@/lib/tips';
@@ -19,9 +19,10 @@ export default function Tips() {
   const { t, locale } = useI18n();
   const { childId } = useLocalSearchParams<{ childId: string }>();
   const { data, error, reload } = useLoad(async () => {
-    const child = await getChild(childId);
+    const [child, support] = await Promise.all([getChild(childId), getChildSupport(childId)]);
     const { years, months } = ageParts(child.birth_date);
-    return { child, tips: await listTips(years * 12 + months, child.gender) };
+    // The child's needs only choose which tips to show; they stay on our servers.
+    return { child, tips: await listTips(years * 12 + months, child.gender, support.needs) };
   }, [childId]);
   const [ai, setAi] = useState<AiState | null>(null);
   const abort = useRef<AbortController | null>(null);

@@ -4,7 +4,7 @@ import { router, useLocalSearchParams } from 'expo-router';
 import { useState } from 'react';
 import { ChildForm } from '@/components/ChildForm';
 import { Button, ErrorText, Screen, Skeleton } from '@/components/ui';
-import { deleteChild, getChild, updateChild } from '@/lib/api';
+import { deleteChild, getChild, getChildSupport, saveChildSupport, updateChild } from '@/lib/api';
 import { useI18n } from '@/lib/i18n';
 import { useSession } from '@/lib/session';
 import { useLoad } from '@/lib/useLoad';
@@ -14,7 +14,7 @@ export default function EditChild() {
   const { t } = useI18n();
   const { refresh } = useSession();
   const { id } = useLocalSearchParams<{ id: string }>();
-  const { data, error } = useLoad(() => getChild(id), [id]);
+  const { data, error } = useLoad(() => Promise.all([getChild(id), getChildSupport(id)]), [id]);
   const [busy, setBusy] = useState(false);
 
   if (error) return <Screen><ErrorText>{t.somethingWrong}</ErrorText></Screen>;
@@ -23,10 +23,11 @@ export default function EditChild() {
   return (
     <Screen>
       <ChildForm
-        initial={data}
+        initial={data[0]}
+        initialSupport={data[1]}
         submitLabel={t.save}
-        onSubmit={async (c) => {
-          await updateChild(id, c);
+        onSubmit={async (c, support) => {
+          await Promise.all([updateChild(id, c), saveChildSupport(id, support)]);
           router.back();
         }}
       />

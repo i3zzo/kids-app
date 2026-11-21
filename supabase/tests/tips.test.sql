@@ -4,8 +4,8 @@ create extension if not exists pgtap with schema extensions;
 select plan(6);
 
 set local role anon;
-select is((select count(*)::int from public.tips), 40, 'visitors can read the 40 published tips');
-select is((select count(*)::int from public.tips where 7 between min_age_months and max_age_months), 5,
+select is((select count(*)::int from public.tips where for_needs = '{}'), 40, 'visitors can read the 40 published general tips');
+select is((select count(*)::int from public.tips where for_needs = '{}' and 7 between min_age_months and max_age_months), 5,
   'a 7-month-old has one tip for each of the 5 sections');
 reset role;
 

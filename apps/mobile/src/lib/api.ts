@@ -12,7 +12,7 @@ export const PRIVACY_VERSION = 'privacy-2026-11-draft';
 
 export type Gender = 'girl' | 'boy';
 export type NationalityGroup = 'kuwaiti' | 'gcc' | 'other';
-export type EventKind = 'activity' | 'training' | 'class' | 'appointment' | 'other';
+export type EventKind = 'activity' | 'training' | 'class' | 'appointment' | 'therapy' | 'other';
 export type DoseStatus = 'due' | 'done' | 'skipped';
 export type Repeat = 'none' | 'daily' | 'weekly' | 'monthly';
 
@@ -105,6 +105,45 @@ export async function updateChild(id: string, c: Partial<Omit<Child, 'id'>>) {
 }
 export async function deleteChild(id: string) {
   check(await supabase.from('children').delete().eq('id', id));
+}
+
+// ---------------------------------------------------------------- special needs
+// Optional and private: only the child's own family can read it (RLS), it is
+// never sent to the AI, and it is in the data export. Deleting the child
+// deletes it.
+export const NEEDS = [
+  'autism', 'adhd', 'speech', 'hearing', 'visual', 'physical', 'learning',
+  'down_syndrome', 'developmental_delay', 'chronic', 'other',
+] as const;
+export type Need = (typeof NEEDS)[number];
+export type ChildSupport = { needs: Need[]; notes: string | null; has_pada_card: boolean | null };
+export type ChildSupportRow = ChildSupport & { child_id: string };
+export const EMPTY_SUPPORT: ChildSupport = { needs: [], notes: null, has_pada_card: null };
+
+export async function getChildSupport(childId: string) {
+  const row = check(
+    await supabase.from('child_support').select('needs, notes, has_pada_card').eq('child_id', childId).maybeSingle(),
+  ) as ChildSupport | null;
+  return row ?? EMPTY_SUPPORT;
+}
+/** Every child's support profile in the family (only children that have one). */
+export async function listChildSupport() {
+  return check(await supabase.from('child_support').select('child_id, needs, notes, has_pada_card')) as ChildSupportRow[];
+}
+/** Saves the profile, or removes it when everything is empty (one server call). */
+export async function saveChildSupport(childId: string, s: ChildSupport) {
+  check(
+    await supabase.rpc('save_child_support', {
+      p_child: childId,
+      p_needs: s.needs,
+      p_notes: s.notes ?? '',
+      p_has_pada_card: s.has_pada_card,
+    }),
+  );
+}
+/** PostgREST filter: content for every child, plus content for any of these needs. */
+function needsFilter(needs: Need[]) {
+  return needs.length ? `for_needs.eq.{},for_needs.ov.{${needs.join(',')}}` : 'for_needs.eq.{}';
 }
 
 // ---------------------------------------------------------------- events
@@ -306,8 +345,8 @@ export async function updateSupply(id: string, s: Partial<SupplyInput>) {
 export async function deleteSupply(id: string) {
   check(await supabase.from('supply_items').delete().eq('id', id));
 }
-/** Suggested items for a child's age (in months) and gender. Small public list. */
-export async function listSuggestions(ageMonths: number, gender: Gender) {
+/** Suggested items for a child's age (in months), gender and needs. Small public list. */
+export async function listSuggestions(ageMonths: number, gender: Gender, needs: Need[] = []) {
   return check(
     await supabase
       .from('supply_suggestions')
@@ -315,6 +354,7 @@ export async function listSuggestions(ageMonths: number, gender: Gender) {
       .lte('min_age_months', ageMonths)
       .gte('max_age_months', ageMonths)
       .or(`only_gender.is.null,only_gender.eq.${gender}`)
+      .or(needsFilter(needs))
       .order('sort_order'),
   ) as SupplySuggestion[];
 }
@@ -517,7 +557,7 @@ export type Tip = {
   body_en: string;
 };
 /** Reviewed tips for a child's age (in months) and gender. Small public list. */
-export async function listTips(ageMonths: number, gender: Gender) {
+export async function listTips(ageMonths: number, gender: Gender, needs: Need[] = []) {
   return check(
     await supabase
       .from('tips')
@@ -525,6 +565,7 @@ export async function listTips(ageMonths: number, gender: Gender) {
       .lte('min_age_months', ageMonths)
       .gte('max_age_months', ageMonths)
       .or(`only_gender.is.null,only_gender.eq.${gender}`)
+      .or(needsFilter(needs))
       .order('sort_order'),
   ) as Tip[];
 }

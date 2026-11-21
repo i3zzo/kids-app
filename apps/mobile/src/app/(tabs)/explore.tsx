@@ -8,6 +8,7 @@ import {
   GOVERNORATES,
   listChildren,
   listKidsEvents,
+  listChildSupport,
   listGuides,
   listTrendingPlaces,
   listOffers,
@@ -64,7 +65,7 @@ function ChildPicker({ children, value, onChange, allowAll }: { children: Child[
 
 function Guides({ children }: { children?: Child[] }) {
   const { t, locale } = useI18n();
-  const { data, error, reload } = useLoad(listGuides, []);
+  const { data, error, reload } = useLoad(() => Promise.all([listGuides(), listChildSupport()]), []);
   const [childId, setChildId] = useState('');
   useEffect(() => {
     if (children?.length && !children.some((c) => c.id === childId)) setChildId(children[0].id);
@@ -73,10 +74,14 @@ function Guides({ children }: { children?: Child[] }) {
   if (!data || !children) return <Skeleton lines={4} />;
   const child = children.find((c) => c.id === childId);
   const audienceLabel = { kuwaiti: t.forKuwaiti, resident: t.forResident, all: t.forAll };
+  const [guides, support] = data;
+  // For a child with special needs, the disability services guides come first.
+  const hasNeeds = support.some((s) => s.child_id === childId && s.needs.length > 0);
+  const ordered = hasNeeds ? [...guides].sort((a, b) => Number(b.topic === 'disability') - Number(a.topic === 'disability')) : guides;
   return (
     <>
       <ChildPicker children={children} value={childId} onChange={setChildId} />
-      {data
+      {ordered
         .filter((g) => guideFits(g.audience, child?.nationality_group))
         .map((g) => (
           <Card key={g.id} onPress={() => router.push({ pathname: '/guide/[id]', params: { id: g.id, child: childId } })} testID={`guide-${g.topic}`}>

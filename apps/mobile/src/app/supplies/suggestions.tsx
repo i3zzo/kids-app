@@ -5,7 +5,7 @@ import { useLocalSearchParams } from 'expo-router';
 import { useState } from 'react';
 import { View } from 'react-native';
 import { Button, Card, ErrorText, Muted, Row, Screen, Skeleton, Txt } from '@/components/ui';
-import { addSuggestedSupplies, getChild, listBrands, listSuggestions, listSupplies, SUPPLY_CATEGORIES, type SupplySuggestion } from '@/lib/api';
+import { addSuggestedSupplies, getChild, getChildSupport, listBrands, listSuggestions, listSupplies, SUPPLY_CATEGORIES, type SupplySuggestion } from '@/lib/api';
 import { ageLabel, ageParts } from '@/lib/dates';
 import { useI18n } from '@/lib/i18n';
 import { useFamily } from '@/lib/session';
@@ -18,10 +18,14 @@ export default function Suggestions() {
   const { familyId } = useFamily();
   const { child: childId } = useLocalSearchParams<{ child: string }>();
   const { data, error, reload } = useLoad(async () => {
-    const child = await getChild(childId);
+    const [child, support] = await Promise.all([getChild(childId), getChildSupport(childId)]);
     const { years, months } = ageParts(child.birth_date);
     // Three independent requests, sent together.
-    const [suggestions, brands, items] = await Promise.all([listSuggestions(years * 12 + months, child.gender), listBrands(), listSupplies(childId)]);
+    const [suggestions, brands, items] = await Promise.all([
+      listSuggestions(years * 12 + months, child.gender, support.needs),
+      listBrands(),
+      listSupplies(childId),
+    ]);
     return { child, suggestions, brands, added: new Set(items.map((i) => i.suggestion_id).filter(Boolean)) };
   }, [childId]);
   const [busy, setBusy] = useState<string | null>(null);

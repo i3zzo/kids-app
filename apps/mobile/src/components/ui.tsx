@@ -141,6 +141,45 @@ export function Choice<T extends string>({
   );
 }
 
+/** Like Choice, but any number can be picked (each pill is a checkbox). */
+export function MultiChoice<T extends string>({
+  label,
+  values,
+  options,
+  onChange,
+  testID,
+}: {
+  label?: string;
+  values: T[];
+  options: { value: T; label: string }[];
+  onChange: (v: T[]) => void;
+  testID?: string;
+}) {
+  const { isRTL } = useI18n();
+  return (
+    <View style={{ gap: space.xs }} testID={testID}>
+      {label ? <Txt style={styles.label}>{label}</Txt> : null}
+      <View style={[styles.choiceRow, isRTL && { flexDirection: 'row-reverse' }]}>
+        {options.map((o) => {
+          const selected = values.includes(o.value);
+          return (
+            <Pressable
+              key={o.value}
+              accessibilityRole="checkbox"
+              accessibilityState={{ checked: selected }}
+              accessibilityLabel={o.label}
+              onPress={() => onChange(selected ? values.filter((v) => v !== o.value) : [...values, o.value])}
+              style={[styles.pill, selected && { backgroundColor: colors.teal, borderColor: colors.teal }]}
+            >
+              <Text style={[styles.pillText, selected && { color: colors.white }]}>{o.label}</Text>
+            </Pressable>
+          );
+        })}
+      </View>
+    </View>
+  );
+}
+
 export function Card({ children, style, onPress, testID }: { children: ReactNode; style?: ViewStyle; onPress?: () => void; testID?: string }) {
   if (onPress) {
     return (

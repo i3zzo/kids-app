@@ -9,7 +9,7 @@ import { DateField } from './DateField';
 import { Button, Choice, ErrorText, Field, Row, Txt } from './ui';
 
 export type EventInput = Omit<CalendarEvent, 'id'>;
-const KINDS: EventKind[] = ['activity', 'training', 'class', 'appointment', 'other'];
+const KINDS: EventKind[] = ['activity', 'training', 'class', 'appointment', 'therapy', 'other'];
 const REPEATS: Repeat[] = ['none', 'daily', 'weekly', 'monthly'];
 const REMINDERS = ['none', '0', '15', '60', '1440'] as const;
 type ReminderChoice = (typeof REMINDERS)[number];
