@@ -10,6 +10,7 @@ export type Gender = 'girl' | 'boy';
 export type NationalityGroup = 'kuwaiti' | 'gcc' | 'other';
 export type EventKind = 'activity' | 'training' | 'class' | 'appointment' | 'other';
 export type DoseStatus = 'due' | 'done' | 'skipped';
+export type Repeat = 'none' | 'daily' | 'weekly' | 'monthly';
 
 export type Child = {
   id: string;
@@ -30,6 +31,11 @@ export type CalendarEvent = {
   all_day: boolean;
   location: string | null;
   notes: string | null;
+  repeat: Repeat;
+  /** last day the event repeats ("YYYY-MM-DD"), inclusive; null = no end */
+  repeat_until: string | null;
+  /** null = no reminder */
+  remind_minutes_before: number | null;
 };
 
 export type DoseInfo = {
@@ -98,20 +104,35 @@ export async function deleteChild(id: string) {
 }
 
 // ---------------------------------------------------------------- events
-const EVENT_COLS = 'id, child_id, kind, title, starts_at, ends_at, all_day, location, notes';
+const EVENT_COLS = 'id, child_id, kind, title, starts_at, ends_at, all_day, location, notes, repeat, repeat_until, remind_minutes_before';
 
-/** Events whose start is in [from, to). Uses the (family_id, starts_at) index. */
+/**
+ * Events that start in [from, to), plus repeating events that began before
+ * `to` (the screen works out their dates with lib/recurrence). Two requests,
+ * sent together; each uses its own index.
+ */
 export async function listEvents(familyId: string, from: Date, to: Date) {
-  return check(
-    await supabase
+  const [oneOff, repeating] = await Promise.all([
+    supabase
       .from('events')
       .select(EVENT_COLS)
       .eq('family_id', familyId)
+      .eq('repeat', 'none')
       .gte('starts_at', from.toISOString())
       .lt('starts_at', to.toISOString())
       .order('starts_at')
       .order('id'),
-  ) as CalendarEvent[];
+    supabase
+      .from('events')
+      .select(EVENT_COLS)
+      .eq('family_id', familyId)
+      .neq('repeat', 'none')
+      .lt('starts_at', to.toISOString())
+      .or(`repeat_until.is.null,repeat_until.gte.${from.toISOString().slice(0, 10)}`)
+      .order('starts_at')
+      .limit(200),
+  ]);
+  return [...(check(oneOff) as CalendarEvent[]), ...(check(repeating) as CalendarEvent[])];
 }
 export async function getEvent(id: string) {
   return check(await supabase.from('events').select(EVENT_COLS).eq('id', id).single()) as CalendarEvent;
@@ -185,4 +206,36 @@ export async function getCurrentSchedule() {
   return check(
     await supabase.from('vaccine_schedule_versions').select('title_ar, title_en, source_url, review_note_ar, review_note_en').eq('is_current', true).maybeSingle(),
   ) as ScheduleVersion | null;
+}
+
+// ---------------------------------------------------------------- notifications
+export type NotificationSettings = {
+  vaccines: boolean;
+  events: boolean;
+  vaccine_days_before: number;
+  quiet_start: string; // "22:00:00"
+  quiet_end: string;
+};
+export const DEFAULT_NOTIFICATION_SETTINGS: NotificationSettings = {
+  vaccines: true,
+  events: true,
+  vaccine_days_before: 3,
+  quiet_start: '22:00:00',
+  quiet_end: '07:00:00',
+};
+
+export async function getNotificationSettings() {
+  const row = check(
+    await supabase.from('notification_settings').select('vaccines, events, vaccine_days_before, quiet_start, quiet_end').maybeSingle(),
+  ) as NotificationSettings | null;
+  return row ?? DEFAULT_NOTIFICATION_SETTINGS;
+}
+export async function saveNotificationSettings(userId: string, s: NotificationSettings) {
+  check(await supabase.from('notification_settings').upsert({ user_id: userId, ...s }));
+}
+export async function registerDevice(token: string, platform: 'ios' | 'android', locale: 'ar' | 'en') {
+  check(await supabase.rpc('register_device', { push_token: token, device_platform: platform, device_locale: locale }));
+}
+export async function unregisterDevice(token: string) {
+  check(await supabase.from('device_tokens').delete().eq('token', token));
 }

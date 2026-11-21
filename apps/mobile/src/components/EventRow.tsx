@@ -12,6 +12,8 @@ export function EventRow({ e, child, showDate }: { e: CalendarEvent; child?: Chi
       <Row>
         <Dot color={child?.color ?? colors.muted} />
         <Txt style={{ fontWeight: '700', flex: 1 }}>{e.title}</Txt>
+        {e.repeat !== 'none' ? <Txt style={{ color: colors.muted }} accessibilityLabel={t.repeatsLabel}>↻</Txt> : null}
+        {e.remind_minutes_before != null ? <Txt style={{ fontSize: 13 }} accessibilityLabel={t.reminder}>🔔</Txt> : null}
         <Muted>{e.all_day ? t.allDay : formatTime(d, locale)}</Muted>
       </Row>
       <Muted>

@@ -7,6 +7,7 @@ import { EventRow } from '@/components/EventRow';
 import { Button, Card, Choice, Dot, ErrorText, Muted, Row, Screen, Skeleton, Txt } from '@/components/ui';
 import { listChildren, listEvents, listVaccinationsBetween, type CalendarEvent, type ChildVaccination } from '@/lib/api';
 import { addDays, monthGrid, toDay } from '@/lib/dates';
+import { expandEvents } from '@/lib/recurrence';
 import { formatDay, useI18n } from '@/lib/i18n';
 import { useFamily } from '@/lib/session';
 import { useLoad } from '@/lib/useLoad';
@@ -36,7 +37,7 @@ export default function Calendar() {
   );
 
   const byDay = useMemo(() => {
-    const map = new Map<string, { colors: Set<string>; events: CalendarEvent[]; doses: ChildVaccination[] }>();
+    const map = new Map<string, { colors: Set<string>; events: (CalendarEvent & { key: string })[]; doses: ChildVaccination[] }>();
     if (!data) return map;
     const childColor = new Map(data.children.map((c) => [c.id, c.color]));
     const get = (k: string) => {
@@ -44,7 +45,8 @@ export default function Calendar() {
       if (!v) map.set(k, (v = { colors: new Set(), events: [], doses: [] }));
       return v;
     };
-    for (const e of data.events) {
+    // Repeating events are stored once; show each of their dates in view.
+    for (const e of expandEvents(data.events, from, to)) {
       if (childFilter !== 'all' && e.child_id !== childFilter) continue;
       const v = get(toDay(new Date(e.starts_at)));
       v.events.push(e);
@@ -152,7 +154,7 @@ export default function Calendar() {
               );
             })}
             {day.events.map((e) => (
-              <EventRow key={e.id} e={e} child={e.child_id ? childById.get(e.child_id) : undefined} />
+              <EventRow key={e.key} e={e} child={e.child_id ? childById.get(e.child_id) : undefined} />
             ))}
           </>
         )}

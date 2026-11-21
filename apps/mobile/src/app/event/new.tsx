@@ -19,7 +19,7 @@ export default function NewEvent() {
     <Screen>
       <EventForm
         children={children}
-        initial={{ title: '', kind: 'activity', child_id: child || null, starts_at: start.toISOString(), ends_at: null, all_day: false, location: null, notes: null }}
+        initial={{ title: '', kind: 'activity', child_id: child || null, starts_at: start.toISOString(), ends_at: null, all_day: false, location: null, notes: null, repeat: 'none', repeat_until: null, remind_minutes_before: 60 }}
         onSubmit={async (e) => {
           await saveEvent(familyId, null, e);
           router.back();

@@ -1,7 +1,9 @@
 // The bottom tab bar. More tabs (Supplies, Explore) come in later build steps.
 import { Tabs } from 'expo-router/js-tabs';
 import { Platform, Text, type ColorValue } from 'react-native';
+import { useEffect } from 'react';
 import { useI18n } from '@/lib/i18n';
+import { syncPush, useNotificationTaps } from '@/lib/notifications';
 import { colors } from '@/theme';
 
 const icon = (glyph: string) => ({ color }: { color: ColorValue }) => (
@@ -11,7 +13,13 @@ const icon = (glyph: string) => ({ color }: { color: ColorValue }) => (
 );
 
 export default function TabsLayout() {
-  const { t, isRTL } = useI18n();
+  const { t, isRTL, locale } = useI18n();
+  // Keep this phone's reminder registration fresh (never shows a prompt),
+  // and open the right screen when a reminder is tapped.
+  useEffect(() => {
+    syncPush(locale).catch(() => {});
+  }, [locale]);
+  useNotificationTaps();
   return (
     <Tabs
       screenOptions={{
