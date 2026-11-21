@@ -360,6 +360,16 @@ Alternatives:
 | **Dana Kids · دانة** | "Dana" is a large pearl — Kuwait's pearl-diving heritage | Common girl's name; less obviously about children |
 | **Qurra · قُرّة** | From "قرة عين" (joy of the eye) | Harder to pronounce for English speakers |
 
+**Round 2 options** (requested 21 Nov 2026), each with its own logo and colours — see `brand/options-v2.png`:
+
+| Option | Name | Meaning | Logo | Colours |
+| --- | --- | --- | --- | --- |
+| A | **Hanoon · حنون** | "Tender, caring" — speaks to the parent | A big heart hugging a small heart | Warm red `#E8505B`, cream `#FFF4F1`, mint `#7BC6B4` |
+| B | **Shattour · شطّور** | Gulf word for a clever little one | A smiling star | Navy `#23307A`, sunshine `#FFC845`, sky `#4FB3E8` |
+| C | **Dallou · دلّوع** | Kuwaiti word for a pampered darling | A sleepy crescent moon on a cloud | Lavender `#7A5CC8`, butter `#FFE8A3`, mint `#8FD9C2` |
+
+![Name and logo options, round 2](brand/options-v2.png)
+
 Before committing: check trademark availability in Kuwait, App Store / Google Play name availability, and the domain and Instagram handle.
 
 ### 16.2 Colours
