@@ -7,7 +7,7 @@ import { LocaleProvider, Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { ActivityIndicator, View } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
-import { Txt } from '@/components/ui';
+import { Button, Txt } from '@/components/ui';
 import { I18nProvider, useI18n } from '@/lib/i18n';
 import { SessionProvider, useSession } from '@/lib/session';
 import { isConfigured } from '@/lib/supabase';
@@ -28,12 +28,21 @@ export default function RootLayout() {
 
 function Gate() {
   const { t, isRTL, hasChosen } = useI18n();
-  const { session, membership, hasChildren } = useSession();
+  const { session, membership, hasChildren, loadFailed, refresh } = useSession();
 
   if (!isConfigured) {
     return (
       <View style={{ flex: 1, justifyContent: 'center', padding: 24, backgroundColor: colors.sandLight }}>
         <Txt>{t.notConfigured}</Txt>
+      </View>
+    );
+  }
+
+  if (session && loadFailed) {
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', padding: 24, gap: 16, backgroundColor: colors.sandLight }}>
+        <Txt style={{ textAlign: 'center' }}>{t.offline}</Txt>
+        <Button title={t.retry} onPress={() => refresh().catch(() => {})} testID="retry-load" />
       </View>
     );
   }

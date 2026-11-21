@@ -5,7 +5,7 @@ import { useState } from 'react';
 import { Share, View } from 'react-native';
 import { Button, Card, Choice, Dot, ErrorText, Muted, Row, Screen, Skeleton, Txt } from '@/components/ui';
 import { createInvite, listChildren, listParents } from '@/lib/api';
-import { ageParts } from '@/lib/dates';
+import { ageLabel } from '@/lib/dates';
 import { useI18n } from '@/lib/i18n';
 import { useFamily, useSession } from '@/lib/session';
 import { useLoad } from '@/lib/useLoad';
@@ -23,12 +23,6 @@ export default function Family() {
     () => Promise.all([listChildren(), listParents(familyId)]).then(([children, parents]) => ({ children, parents })),
     [familyId],
   );
-
-  const ageLabel = (birth: string) => {
-    const { years, months } = ageParts(birth);
-    if (years === 0 && months === 0) return t.ageNewborn;
-    return [years ? `${years} ${t.years}` : null, months ? `${months} ${t.months}` : null].filter(Boolean).join(' ');
-  };
 
   async function makeInvite() {
     setBusy(true);
@@ -60,7 +54,7 @@ export default function Family() {
             <Row>
               <Dot color={c.color} size={14} />
               <Txt style={{ fontWeight: '700', fontSize: 18, flex: 1 }}>{c.first_name}</Txt>
-              <Muted>{ageLabel(c.birth_date)}</Muted>
+              <Muted>{ageLabel(c.birth_date, locale)}</Muted>
             </Row>
             <Row>
               <View style={{ flex: 1 }}>

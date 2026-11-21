@@ -11,7 +11,8 @@ const ar = {
   edit: 'تعديل',
   retry: 'إعادة المحاولة',
   loading: 'جارٍ التحميل…',
-  somethingWrong: 'حدث خطأ. حاول مرة أخرى.',
+  somethingWrong: 'حدث خطأ. تأكد من اتصالك بالإنترنت وحاول مرة أخرى.',
+  offline: 'لا يمكن الوصول إلى الخادم. تأكد من اتصالك بالإنترنت.',
   notConfigured: 'التطبيق غير مربوط بالخادم بعد. انسخ ملف ‎.env.example‎ إلى ‎.env‎ وأضف قيم Supabase.',
 
   // language
@@ -65,9 +66,6 @@ const ar = {
   invalidName: 'أدخل الاسم الأول',
   invalidBirth: 'أدخل تاريخ ميلاد صحيح (الطفل من 0 إلى 10 سنوات)',
   deleteChildConfirm: 'سيتم حذف الطفل وكل مواعيده وتطعيماته. هل أنت متأكد؟',
-  years: 'سنة',
-  months: 'شهر',
-  ageNewborn: 'حديث الولادة',
 
   // tabs
   tabHome: 'الرئيسية',
@@ -155,7 +153,8 @@ const en: Strings = {
   edit: 'Edit',
   retry: 'Try again',
   loading: 'Loading…',
-  somethingWrong: 'Something went wrong. Please try again.',
+  somethingWrong: 'Something went wrong. Check your internet connection and try again.',
+  offline: "Can't reach the server. Check your internet connection.",
   notConfigured: 'The app is not connected to a server yet. Copy .env.example to .env and add your Supabase values.',
 
   chooseLanguage: 'Choose your language',
@@ -205,9 +204,6 @@ const en: Strings = {
   invalidName: 'Enter a first name',
   invalidBirth: 'Enter a valid birth date (children aged 0 to 10)',
   deleteChildConfirm: 'This deletes the child and all their events and vaccinations. Are you sure?',
-  years: 'y',
-  months: 'm',
-  ageNewborn: 'Newborn',
 
   tabHome: 'Home',
   tabCalendar: 'Calendar',

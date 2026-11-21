@@ -1,7 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { toKuwaitE164 } from './phone.ts';
-import { ageParts, isValidDay, monthGrid, toDay } from './dates.ts';
+import { ageLabel, ageParts, isValidDay, monthGrid, toDay } from './dates.ts';
 
 test('accepts Kuwaiti mobile numbers in common formats', () => {
   assert.equal(toKuwaitE164('5000 0001'), '+96550000001');
@@ -25,4 +25,13 @@ test('date helpers', () => {
   assert.equal(grid.length, 42);
   assert.equal(grid[0].getDay(), 0); // starts on Sunday
   assert.equal(toDay(grid[0]), '2026-11-01');
+});
+
+test('age labels use the right Arabic plural', () => {
+  const today = new Date(2026, 10, 21);
+  assert.equal(ageLabel('2020-11-21', 'ar', today), '6 سنوات');
+  assert.equal(ageLabel('2024-09-21', 'ar', today), 'سنتان وشهران');
+  assert.equal(ageLabel('2025-10-21', 'ar', today), 'سنة وشهر');
+  assert.equal(ageLabel('2026-11-10', 'ar', today), 'حديث الولادة');
+  assert.equal(ageLabel('2025-08-21', 'en', today), '1 year 3 months');
 });

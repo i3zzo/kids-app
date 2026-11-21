@@ -49,3 +49,18 @@ export function maxBirthAgeDay(today = new Date()): string {
   d.setFullYear(d.getFullYear() - 11);
   return toDay(addDays(d, 1));
 }
+
+/** "1 year 3 months" / "سنة و3 أشهر", with correct Arabic plural forms. */
+export function ageLabel(birthDay: string, locale: 'ar' | 'en', today = new Date()): string {
+  const { years, months } = ageParts(birthDay, today);
+  if (locale === 'ar') {
+    const y = years === 0 ? '' : years === 1 ? 'سنة' : years === 2 ? 'سنتان' : years <= 10 ? `${years} سنوات` : `${years} سنة`;
+    const m = months === 0 ? '' : months === 1 ? 'شهر' : months === 2 ? 'شهران' : months <= 10 ? `${months} أشهر` : `${months} شهراً`;
+    if (!y && !m) return 'حديث الولادة';
+    return [y, m].filter(Boolean).join(' و');
+  }
+  const y = years === 0 ? '' : `${years} ${years === 1 ? 'year' : 'years'}`;
+  const m = months === 0 ? '' : `${months} ${months === 1 ? 'month' : 'months'}`;
+  if (!y && !m) return 'Newborn';
+  return [y, m].filter(Boolean).join(' ');
+}

@@ -20,7 +20,7 @@ export function Screen({ children, scroll = true, padded = true }: { children: R
   const body = <View style={[padded && styles.padded, { gap: space.lg }]}>{children}</View>;
   return (
     <SafeAreaView style={styles.screen} edges={['bottom']}>
-      {scroll ? <ScrollView keyboardShouldPersistTaps="handled">{body}</ScrollView> : body}
+      {scroll ? <ScrollView keyboardShouldPersistTaps="handled" automaticallyAdjustKeyboardInsets keyboardDismissMode="interactive">{body}</ScrollView> : body}
     </SafeAreaView>
   );
 }

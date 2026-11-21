@@ -15,6 +15,8 @@ type SessionState = {
   membership: Membership | null | undefined;
   /** true once the family has at least one child (onboarding finished) */
   hasChildren: boolean | undefined;
+  /** true when we couldn't reach the server to load the family (e.g. no internet) */
+  loadFailed: boolean;
   refresh: () => Promise<void>;
   signOut: () => Promise<void>;
 };
@@ -25,6 +27,7 @@ export function SessionProvider({ children }: { children: ReactNode }) {
   const [session, setSession] = useState<Session | null | undefined>(undefined);
   const [membership, setMembership] = useState<Membership | null | undefined>(undefined);
   const [hasChildren, setHasChildren] = useState<boolean | undefined>(undefined);
+  const [loadFailed, setLoadFailed] = useState(false);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => setSession(data.session));
@@ -51,6 +54,8 @@ export function SessionProvider({ children }: { children: ReactNode }) {
       supabase.from('children').select('id').limit(1),
     ]);
     if (m.error) throw m.error;
+    if (c.error) throw c.error;
+    setLoadFailed(false);
     const row = m.data as unknown as { family_id: string; role: FamilyRole; families: { name: string } | null } | null;
     setMembership(row ? { familyId: row.family_id, role: row.role, familyName: row.families?.name ?? '' } : null);
     setHasChildren((c.data?.length ?? 0) > 0);
@@ -59,7 +64,9 @@ export function SessionProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     if (session === undefined) return;
     setMembership(undefined);
-    refresh().catch(() => setMembership(null));
+    // If the server can't be reached, don't pretend the parent has no family
+    // (that would send them to "Create family"). Show a retry screen instead.
+    refresh().catch(() => setLoadFailed(true));
   }, [session, refresh]);
 
   const signOut = useCallback(async () => {
@@ -67,8 +74,8 @@ export function SessionProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const value = useMemo(
-    () => ({ session, membership, hasChildren, refresh, signOut }),
-    [session, membership, hasChildren, refresh, signOut],
+    () => ({ session, membership, hasChildren, loadFailed, refresh, signOut }),
+    [session, membership, hasChildren, loadFailed, refresh, signOut],
   );
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>;
 }
