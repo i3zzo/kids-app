@@ -80,3 +80,4 @@ cd apps/mobile && npm run typecheck && npm test
 - [Step 2: security fixes before launch](docs/explain/02-security-hardening.md)
 - [Step 3: reminders, repeating events and notification settings](docs/explain/03-reminders.md)
 - [Step 4: supplies tracker and suggested items by age](docs/explain/04-supplies.md)
+- [Step 5: Explore — government guides, directory and offers](docs/explain/05-explore.md)

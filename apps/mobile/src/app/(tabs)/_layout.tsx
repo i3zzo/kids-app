@@ -37,6 +37,7 @@ export default function TabsLayout() {
       <Tabs.Screen name="home" options={{ title: t.tabHome, tabBarIcon: icon('⌂') }} />
       <Tabs.Screen name="calendar" options={{ title: t.tabCalendar, tabBarIcon: icon('▦') }} />
       <Tabs.Screen name="supplies" options={{ title: t.tabSupplies, tabBarIcon: icon('◫') }} />
+      <Tabs.Screen name="explore" options={{ title: t.tabExplore, tabBarIcon: icon('◎') }} />
       <Tabs.Screen name="family" options={{ title: t.tabFamily, tabBarIcon: icon('☺') }} />
     </Tabs>
   );

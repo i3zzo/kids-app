@@ -323,3 +323,119 @@ export async function addSuggestedSupplies(familyId: string, childId: string, li
   if (!list.length) return;
   check(await supabase.from('supply_items').insert(list.map((s) => ({ ...s, family_id: familyId, child_id: childId }))));
 }
+
+// ---------------------------------------------------------------- explore
+export type GuideAudience = 'kuwaiti' | 'resident' | 'all';
+export type Guide = {
+  id: string;
+  topic: string;
+  audience: GuideAudience;
+  title_ar: string;
+  title_en: string;
+  summary_ar: string;
+  summary_en: string;
+  source_url: string | null;
+  last_verified_on: string | null;
+};
+export type GuideStep = {
+  id: string;
+  position: number;
+  title_ar: string;
+  title_en: string;
+  body_ar: string;
+  body_en: string;
+  documents_ar: string[];
+  documents_en: string[];
+  link_url: string | null;
+};
+const GUIDE_COLS = 'id, topic, audience, title_ar, title_en, summary_ar, summary_en, source_url, last_verified_on';
+
+export async function listGuides() {
+  return check(await supabase.from('guides').select(GUIDE_COLS).order('sort_order')) as Guide[];
+}
+/** A guide with its steps, in one request (nested select). */
+export async function getGuide(id: string) {
+  return check(
+    await supabase
+      .from('guides')
+      .select(`${GUIDE_COLS}, guide_steps(id, position, title_ar, title_en, body_ar, body_en, documents_ar, documents_en, link_url)`)
+      .eq('id', id)
+      .order('position', { referencedTable: 'guide_steps' })
+      .single(),
+  ) as Guide & { guide_steps: GuideStep[] };
+}
+/** Steps this child has done (ids). */
+export async function listGuideProgress(childId: string) {
+  const rows = check(await supabase.from('guide_progress').select('step_id').eq('child_id', childId)) as { step_id: string }[];
+  return new Set(rows.map((r) => r.step_id));
+}
+export async function setGuideStepDone(familyId: string, childId: string, stepId: string, done: boolean) {
+  if (done) check(await supabase.from('guide_progress').upsert({ family_id: familyId, child_id: childId, step_id: stepId }, { ignoreDuplicates: true }));
+  else check(await supabase.from('guide_progress').delete().eq('child_id', childId).eq('step_id', stepId));
+}
+
+export type PlaceCategory = 'activity' | 'nursery' | 'school' | 'hospital' | 'paediatrician' | 'toy_store' | 'clothing_store';
+export const PLACE_CATEGORIES: PlaceCategory[] = ['hospital', 'paediatrician', 'nursery', 'school', 'activity', 'toy_store', 'clothing_store'];
+export type Governorate = 'capital' | 'hawalli' | 'farwaniya' | 'mubarak_al_kabeer' | 'ahmadi' | 'jahra';
+export const GOVERNORATES: Governorate[] = ['capital', 'hawalli', 'farwaniya', 'mubarak_al_kabeer', 'ahmadi', 'jahra'];
+export type Place = {
+  id: string;
+  category: PlaceCategory;
+  name_ar: string;
+  name_en: string;
+  governorate: Governorate;
+  area_ar: string | null;
+  area_en: string | null;
+  description_ar: string | null;
+  description_en: string | null;
+  phone: string | null;
+  whatsapp: string | null;
+  instagram: string | null;
+  website: string | null;
+  maps_url: string | null;
+  hours_ar: string | null;
+  hours_en: string | null;
+  verified_on: string | null;
+};
+export const PLACES_PAGE = 20;
+
+/** One page of the directory. Uses the (category, governorate, name) index. */
+export async function listPlaces(opts: { category: PlaceCategory; governorate: Governorate | null; search: string; page: number }) {
+  let q = supabase
+    .from('places')
+    .select('id, category, name_ar, name_en, governorate, area_ar, area_en, description_ar, description_en, phone, whatsapp, instagram, website, maps_url, hours_ar, hours_en, verified_on')
+    .eq('category', opts.category);
+  if (opts.governorate) q = q.eq('governorate', opts.governorate);
+  const s = opts.search.trim().replace(/[%_,()*]/g, ' ').slice(0, 40);
+  if (s) q = q.or(`name_ar.ilike.*${s}*,name_en.ilike.*${s}*`);
+  const from = opts.page * PLACES_PAGE;
+  return check(await q.order('name_en').order('id').range(from, from + PLACES_PAGE - 1)) as Place[];
+}
+
+export type Offer = {
+  id: string;
+  category: 'toys' | 'clothing';
+  title_ar: string;
+  title_en: string;
+  store_ar: string;
+  store_en: string;
+  details_ar: string | null;
+  details_en: string | null;
+  min_age_months: number;
+  max_age_months: number;
+  only_gender: Gender | null;
+  ends_on: string;
+  url: string | null;
+};
+/** Current offers, optionally for one child's age and gender. */
+export async function listOffers(todayDay: string, forChild?: { ageMonths: number; gender: Gender }) {
+  let q = supabase
+    .from('offers')
+    .select('id, category, title_ar, title_en, store_ar, store_en, details_ar, details_en, min_age_months, max_age_months, only_gender, ends_on, url')
+    .gte('ends_on', todayDay)
+    .lte('starts_on', todayDay);
+  if (forChild) {
+    q = q.lte('min_age_months', forChild.ageMonths).gte('max_age_months', forChild.ageMonths).or(`only_gender.is.null,only_gender.eq.${forChild.gender}`);
+  }
+  return check(await q.order('ends_on').order('id').limit(50)) as Offer[];
+}
