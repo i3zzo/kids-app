@@ -6,6 +6,12 @@
 -- the date it was checked. verified_on stays null until the team has called
 -- or visited, so the app keeps showing "details not yet confirmed".
 
+-- New section: medical centres (government primary health care clinics,
+-- specialised centres and private polyclinics).
+alter table public.places drop constraint places_category_check;
+alter table public.places add constraint places_category_check
+  check (category in ('activity', 'nursery', 'school', 'hospital', 'medical_centre', 'paediatrician', 'toy_store', 'clothing_store'));
+
 alter table public.places
   -- Stable key for a listing, so a re-import updates the row instead of adding a copy.
   add column ref               text unique check (ref ~ '^[a-z0-9-]{3,80}$'),

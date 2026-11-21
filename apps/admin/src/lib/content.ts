@@ -37,7 +37,7 @@ export const CONTENT: Record<string, ContentType> = {
     order: 'name_en',
     hint: 'Set "Verified on" only after calling or visiting the place. Phones are +965 and 8 digits. Enter a price only if a source shows it, with the source link and the date you checked; leave it empty when it isn\'t published.',
     fields: [
-      { key: 'category', label: 'Category', type: 'select', options: ['activity', 'nursery', 'school', 'hospital', 'paediatrician', 'toy_store', 'clothing_store'], required: true },
+      { key: 'category', label: 'Category', type: 'select', options: ['activity', 'nursery', 'school', 'hospital', 'medical_centre', 'paediatrician', 'toy_store', 'clothing_store'], required: true },
       ar('name_ar', 'Name (Arabic)'),
       en('name_en', 'Name (English)'),
       { key: 'governorate', label: 'Governorate', type: 'select', options: ['capital', 'hawalli', 'farwaniya', 'mubarak_al_kabeer', 'ahmadi', 'jahra'], required: true },

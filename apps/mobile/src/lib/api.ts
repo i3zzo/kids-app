@@ -378,8 +378,8 @@ export async function setGuideStepDone(familyId: string, childId: string, stepId
   else check(await supabase.from('guide_progress').delete().eq('child_id', childId).eq('step_id', stepId));
 }
 
-export type PlaceCategory = 'activity' | 'nursery' | 'school' | 'hospital' | 'paediatrician' | 'toy_store' | 'clothing_store';
-export const PLACE_CATEGORIES: PlaceCategory[] = ['hospital', 'paediatrician', 'nursery', 'school', 'activity', 'toy_store', 'clothing_store'];
+export type PlaceCategory = 'medical_centre' | 'activity' | 'nursery' | 'school' | 'hospital' | 'paediatrician' | 'toy_store' | 'clothing_store';
+export const PLACE_CATEGORIES: PlaceCategory[] = ['hospital', 'medical_centre', 'paediatrician', 'nursery', 'school', 'activity', 'toy_store', 'clothing_store'];
 export type Governorate = 'capital' | 'hawalli' | 'farwaniya' | 'mubarak_al_kabeer' | 'ahmadi' | 'jahra';
 export const GOVERNORATES: Governorate[] = ['capital', 'hawalli', 'farwaniya', 'mubarak_al_kabeer', 'ahmadi', 'jahra'];
 export type Place = {
