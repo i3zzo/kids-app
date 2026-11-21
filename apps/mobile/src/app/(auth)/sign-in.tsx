@@ -7,7 +7,7 @@ import { Captcha, captchaSiteKey } from '@/components/Captcha';
 import { useI18n } from '@/lib/i18n';
 import { toKuwaitE164 } from '@/lib/phone';
 import { supabase } from '@/lib/supabase';
-import { View } from 'react-native';
+import { Image, View } from 'react-native';
 import { space } from '@/theme';
 
 export default function SignIn() {
@@ -32,6 +32,7 @@ export default function SignIn() {
   return (
     <Screen>
       <View style={{ marginTop: space.xxl, gap: space.sm }}>
+        <Image source={require('../../../assets/logo.webp')} style={{ width: 72, height: 72, borderRadius: 18, alignSelf: 'center' }} accessibilityIgnoresInvertColors alt="Yahal" />
         <Title>{t.signInTitle}</Title>
         <Muted>{t.signInHint}</Muted>
       </View>
