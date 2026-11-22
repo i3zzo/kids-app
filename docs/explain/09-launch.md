@@ -107,8 +107,8 @@ Grouped by who does it. The code is ready for each of these, and each doc listed
 17. Make yourself the first super admin with the one SQL line in `06-admin.md`, then add the team from the Staff page.
 
 **Store submission**
-18. Store screenshots with a made-up demo family (`docs/launch/store-listing.md`).
-19. Fill in Apple's "App Privacy" and Google's "Data safety" forms with the answers in that file.
+18. Store screenshots: done, with a made-up demo family (`store/screenshots/`, sizes and captions in `docs/launch/store-listing.md`).
+19. Fill in Apple's "App Privacy" and Google's "Data safety" forms with the answers in `docs/launch/privacy-labels.md`. Build and submit with `docs/launch/build-and-submit.md`.
 20. Run the phone test checklist on a real iPhone and Android phone with a preview build, and send me anything that's wrong.
 
 **Special needs (`11-special-needs.md`)**
