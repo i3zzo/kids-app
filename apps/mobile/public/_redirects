@@ -1,0 +1,3 @@
+# Netlify / Cloudflare Pages: the web app is a single page, so every path
+# (e.g. /child/123 after a refresh) is served by index.html.
+/*    /index.html   200

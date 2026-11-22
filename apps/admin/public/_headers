@@ -1,0 +1,11 @@
+# Netlify / Cloudflare Pages cache rules for the admin panel (static export).
+# Next.js puts a content hash in every file under /_next/static, so a new build
+# gets new names: safe to cache for a year. Pages keep the host's default
+# (always re-checked). Cache-Control is set only here because both hosts join
+# the values of every matching rule.
+/_next/static/*
+  Cache-Control: public, max-age=31536000, immutable
+/*
+  X-Content-Type-Options: nosniff
+  X-Frame-Options: DENY
+  Referrer-Policy: strict-origin-when-cross-origin
