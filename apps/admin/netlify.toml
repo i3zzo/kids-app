@@ -1,0 +1,9 @@
+# Netlify site for the admin panel (base directory: apps/admin).
+# NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY are set in the
+# Netlify site's environment variables (test server values), not here.
+[build]
+  command = "npm run build"
+  publish = "out"
+
+[build.environment]
+  NODE_VERSION = "22"

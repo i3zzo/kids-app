@@ -1,0 +1,9 @@
+# Netlify site for the web test version (base directory: apps/mobile).
+# EXPO_PUBLIC_SUPABASE_URL and EXPO_PUBLIC_SUPABASE_ANON_KEY are set in the
+# Netlify site's environment variables (test server values), not here.
+[build]
+  command = "npx expo export -p web"
+  publish = "dist"
+
+[build.environment]
+  NODE_VERSION = "22"
