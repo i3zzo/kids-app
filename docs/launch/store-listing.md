@@ -107,7 +107,7 @@ Health information in the app is general and is not medical advice. Always check
 | --- | --- | --- | --- | --- |
 | Apple | iPhone 6.9" | 1320 × 2868 | **Required** (Apple scales it down for smaller iPhones) | `store/screenshots/ios-6.9/ar/` and `/en/`, 6 each |
 | Apple | iPhone 6.5" | 1284 × 2778 or 1242 × 2688 | Only if you don't upload 6.9" | Not needed |
-| Apple | iPad 13" | 2064 × 2752 | **Required only while `supportsTablet` is `true`** in `app.json` | Not made, see below |
+| Apple | iPad 13" | 2064 × 2752 | Not needed: `supportsTablet` is `false` in `app.json` (iPhone only for v1) | Not made |
 | Google | Phone | 1080 × 1920 (any 9:16 between 320 and 3,840 px) | **Required**, 2 to 8 | `store/screenshots/android-phone/ar/` and `/en/`, 6 each |
 | Google | Feature graphic | 1024 × 500 | **Required** | `store/screenshots/android-feature-graphic/` (AR and EN) |
 | Google | App icon | 512 × 512 | **Required** | `store/icons/android/play-store-icon-512.png` |
@@ -115,7 +115,7 @@ Health information in the app is general and is not medical advice. Always check
 
 All files are PNG with no transparency, which both stores accept. Apple allows up to 10 per language, Google up to 8.
 
-**iPad:** `app.json` has `"supportsTablet": true`, so Apple will ask for iPad screenshots, and the app is reviewed on an iPad too. The app's screens are designed for phones. For version 1 I recommend switching this to `false`. iPads can still run the iPhone version, and no iPad screenshots are needed. If you'd rather keep iPad support, the iPad layout needs checking first, and I'll make 2064 × 2752 screenshots from it.
+**iPad:** version 1 is iPhone only (`"supportsTablet": false` in `app.json`), because the screens are designed for phones. iPads can still run the iPhone version, and no iPad screenshots are needed. To add iPad support later, check the iPad layout, switch it back to `true`, and add 2064 × 2752 screenshots.
 
 ### The six screenshots and their captions
 

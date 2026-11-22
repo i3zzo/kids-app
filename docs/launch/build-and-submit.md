@@ -55,7 +55,7 @@ Check them with `npx eas-cli@latest env:list --environment production`.
 
 ## 3. Before the first store build
 
-1. **iPad or not.** `app.json` has `"supportsTablet": true`. I recommend `false` for version 1 (see `store-listing.md` section 6).
+1. **iPhone only.** `app.json` has `"supportsTablet": false` for version 1, so no iPad screenshots are needed (see `store-listing.md` section 6).
 2. **Make sure the app record names are free.** In App Store Connect create the app (**Apps > + > New App**: platform iOS, name, primary language Arabic, bundle ID `kw.yahal.app`, SKU e.g. `yahal-ios`). In Play Console create the app (**Create app**: name, default language Arabic, App, Free).
 3. **Fill in the privacy policy brackets** and publish `store/privacy/index.html` at `https://[your domain]/privacy` (any static host works: GitHub Pages, Netlify, Cloudflare Pages).
 
